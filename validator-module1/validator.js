@@ -1,25 +1,25 @@
 (function () {
     let MAX = 10;
+    let MIN = 1;
 
     let hypothesesEl = document.getElementById("hypotheses");
     let addBtn = document.getElementById("addHypBtn");
     let countText = document.getElementById("countText");
-
     let conclusionInput = document.getElementById("conclusionInput");
     let resultBox = document.getElementById("resultBox");
-
-    let exampleBtn = document.getElementById("exampleBtn");
     let clearBtn = document.getElementById("clearBtn");
 
     function updateLabels() {
         let rows = hypothesesEl.querySelectorAll(".hyp-row");
+
         for (let i = 0; i < rows.length; i++) {
             rows[i].querySelector(".hyp-label").textContent = "H" + (i + 1);
         }
+
         countText.textContent = "(" + rows.length + "/" + MAX + ")";
-        addBtn.disabled = rows.length >= MAX;
-        addBtn.style.opacity = addBtn.disabled ? "0.6" : "1";
-        addBtn.style.cursor = addBtn.disabled ? "not-allowed" : "pointer";
+
+        if (rows.length >= MAX) addBtn.classList.add("hidden");
+        else addBtn.classList.remove("hidden");
     }
 
     function makeRow(value) {
@@ -42,12 +42,6 @@
         remove.title = "Quitar hipótesis";
         remove.textContent = "–";
 
-        remove.addEventListener("click", function () {
-            row.remove();
-            updateLabels();
-            resultBox.textContent = "";
-        });
-
         row.appendChild(label);
         row.appendChild(input);
         row.appendChild(remove);
@@ -55,21 +49,26 @@
         return row;
     }
 
-    function attachRemoveHandlersToExisting() {
-        let removes = hypothesesEl.querySelectorAll(".hyp-remove");
-        for (let i = 0; i < removes.length; i++) {
-            (function (btn) {
-                btn.addEventListener("click", function () {
-                    let row = btn.closest(".hyp-row");
-                    if (row) row.remove();
-                    updateLabels();
-                    resultBox.textContent = "";
-                });
-            })(removes[i]);
-        }
-    }
+    // ✅ Un solo listener para quitar (evita duplicados)
+    hypothesesEl.addEventListener("click", function (e) {
+        let btn = e.target.closest(".hyp-remove");
+        if (!btn) return;
+
+        let rows = hypothesesEl.querySelectorAll(".hyp-row");
+        if (rows.length <= MIN) return;
+
+        let row = btn.closest(".hyp-row");
+        if (row) row.remove();
+
+        updateLabels();
+        resultBox.textContent = "";
+    });
 
     addBtn.addEventListener("click", function () {
+        if (addBtn.dataset.busy === "1") return;
+        addBtn.dataset.busy = "1";
+        setTimeout(() => addBtn.dataset.busy = "0", 0);
+
         let rows = hypothesesEl.querySelectorAll(".hyp-row");
         if (rows.length >= MAX) return;
 
@@ -77,28 +76,15 @@
         updateLabels();
     });
 
-    exampleBtn.addEventListener("click", function () {
-        // Ejemplo clásico: p -> q, p ⟹ q
-        hypothesesEl.innerHTML = "";
-        hypothesesEl.appendChild(makeRow("p -> q"));
-        hypothesesEl.appendChild(makeRow("p"));
-        conclusionInput.value = "q";
-        attachRemoveHandlersToExisting();
-        updateLabels();
-        resultBox.textContent = "";
-    });
-
     clearBtn.addEventListener("click", function () {
         hypothesesEl.innerHTML = "";
         hypothesesEl.appendChild(makeRow(""));
         hypothesesEl.appendChild(makeRow(""));
         conclusionInput.value = "";
-        attachRemoveHandlersToExisting();
-        updateLabels();
         resultBox.textContent = "";
+        updateLabels();
     });
 
-    // Botones grandes (por ahora solo placeholder visual)
     document.getElementById("criticalBtn").addEventListener("click", function () {
         resultBox.textContent = "Listo: aquí irá la validación por Renglón Crítico (pendiente).";
     });
@@ -107,7 +93,5 @@
         resultBox.textContent = "Listo: aquí irá la validación por Tautología (pendiente).";
     });
 
-    // Init
-    attachRemoveHandlersToExisting();
     updateLabels();
 })();
