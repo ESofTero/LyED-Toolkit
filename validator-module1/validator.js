@@ -28,7 +28,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // No prevengas el default para que la consola siga recibiendo la información.
     });
 
+    // Evitar re-entrancy accidental en updateLabels
+    let updatingLabels = false;
+
     function updateLabels() {
+        if (updatingLabels) return;
+        updatingLabels = true;
         // Tomamos una snapshot estática
         let rows = hypothesesEl.querySelectorAll(".hyp-row");
 
@@ -56,6 +61,13 @@ document.addEventListener("DOMContentLoaded", function () {
             for (let i = 0; i < rows.length; i++) rows[i].classList.remove("no-remove");
             for (let i = 0; i < removeBtns.length; i++) removeBtns[i].classList.remove("hidden");
         }
+
+        updatingLabels = false;
+    }
+
+    function clampString(s, max) {
+        if (typeof s !== 'string') return '';
+        return s.length > max ? s.slice(0, max) : s;
     }
 
     function makeRow(value) {
@@ -73,6 +85,29 @@ document.addEventListener("DOMContentLoaded", function () {
         // Limitar tamaño para evitar entradas excesivamente largas que puedan causar problemas
         input.maxLength = 200;
         input.value = value || "";
+
+        // Defender contra pegados masivos: truncar
+        input.addEventListener('paste', function (ev) {
+            try {
+                let paste = (ev.clipboardData || window.clipboardData).getData('text') || '';
+                if (paste.length > input.maxLength) {
+                    ev.preventDefault();
+                    // Insert trimmed text manualmente
+                    let trimmed = clampString(paste, input.maxLength);
+                    let start = input.selectionStart || 0;
+                    let end = input.selectionEnd || 0;
+                    let newVal = input.value.slice(0, start) + trimmed + input.value.slice(end);
+                    input.value = clampString(newVal, input.maxLength);
+                }
+            } catch (e) { /* no-op */ }
+        });
+
+        // También defensiva en 'input' (por si el navegador ignora maxlength en alguna circunstancia)
+        input.addEventListener('input', function () {
+            if (input.value && input.value.length > input.maxLength) {
+                input.value = input.value.slice(0, input.maxLength);
+            }
+        });
 
         let remove = document.createElement("button");
         remove.className = "hyp-remove";
@@ -163,6 +198,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Limita la longitud de la conclusión también (defensa sobre entradas grandes)
     try { conclusionInput.maxLength = 200; } catch(e) {}
+
+    // Defender contra pegados masivos en la conclusión
+    conclusionInput.addEventListener('paste', function (ev) {
+        try {
+            let paste = (ev.clipboardData || window.clipboardData).getData('text') || '';
+            if (paste.length > (conclusionInput.maxLength || 200)) {
+                ev.preventDefault();
+                conclusionInput.value = clampString(paste, conclusionInput.maxLength || 200);
+            }
+        } catch (e) { /* no-op */ }
+    });
+
+    // Validación defensiva en 'input' para la conclusión
+    conclusionInput.addEventListener('input', function () {
+        try {
+            if (conclusionInput.value && conclusionInput.value.length > (conclusionInput.maxLength || 200)) {
+                conclusionInput.value = conclusionInput.value.slice(0, conclusionInput.maxLength || 200);
+            }
+        } catch (e) { /* no-op */ }
+    });
 
     updateLabels();
 });
