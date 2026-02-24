@@ -6,6 +6,7 @@ body{
     min-height: 100svh;
     color: #ffffff;
     background: linear-gradient(270deg, #815c97, #230443);
+    overflow-x: hidden; /* evita “saltos” raros en desktop */
 }
 
 /* Top bar */
@@ -189,17 +190,11 @@ body{
     font-weight: 900;
     cursor: pointer;
 }
-
 .hyp-remove:hover{ color: #815c97; }
 
 /* Cuando solo hay 1 hipótesis: sin columna del botón "-" */
 .hyp-row.no-remove {
     grid-template-columns: 44px 1fr;
-}
-
-/* Oculta el botón de quitar */
-.hyp-remove.hidden {
-    display: none !important;
 }
 
 /* Add hypothesis */

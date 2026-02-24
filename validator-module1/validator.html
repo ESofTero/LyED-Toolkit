@@ -8,7 +8,6 @@
 </head>
 <body>
 
-<!-- Top bar -->
 <header class="topbar">
     <div class="topbar-left">
         <a class="back-link" href="../index.html">← Volver</a>
@@ -19,15 +18,15 @@
 </header>
 
 <main class="page">
-
     <section class="card">
+
         <section class="hero">
             <div class="title-line" aria-hidden="true"></div>
             <h1>Lógica Proposicional: <span class="sub_line">Validador de argumentos</span></h1>
             <p>Ingrese las hipótesis y la conclusión para evaluar la validez del argumento.</p>
             <div class="mini-line" aria-hidden="true"></div>
         </section>
-        <!-- Hipótesis -->
+
         <div class="section-header">
             <div class="section-title">
                 <span class="section-bar"></span>
@@ -37,17 +36,16 @@
         </div>
 
         <div class="hypotheses" id="hypotheses">
-            <!-- Filas iniciales (2) -->
             <div class="hyp-row">
                 <div class="hyp-label">H1</div>
-                <input class="hyp-input" type="text" placeholder="Escribe una hipótesis..." value="p → q" />
-                <button class="hyp-remove" type="button" title="Quitar hipótesis">–</button>
+                <input class="hyp-input" type="text" placeholder="Escribe una hipótesis..." value="p → q" aria-label="Hipótesis 1" />
+                <button class="hyp-remove" type="button" title="Quitar hipótesis" aria-label="Quitar hipótesis 1">–</button>
             </div>
 
             <div class="hyp-row">
                 <div class="hyp-label">H2</div>
-                <input class="hyp-input" type="text" placeholder="Escribe una hipótesis..." value="p" />
-                <button class="hyp-remove" type="button" title="Quitar hipótesis">–</button>
+                <input class="hyp-input" type="text" placeholder="Escribe una hipótesis..." value="p" aria-label="Hipótesis 2" />
+                <button class="hyp-remove" type="button" title="Quitar hipótesis" aria-label="Quitar hipótesis 2">–</button>
             </div>
         </div>
 
@@ -55,7 +53,6 @@
 
         <div class="divider"></div>
 
-        <!-- Conclusión -->
         <div class="section-header">
             <div class="section-title">
                 <span class="section-bar"></span>
@@ -65,10 +62,9 @@
 
         <div class="conclusion">
             <div class="concl-icon">∴</div>
-            <input id="conclusionInput" class="concl-input" type="text" placeholder="Escribe la conclusión..." value="q" />
+            <input id="conclusionInput" class="concl-input" type="text" placeholder="Escribe la conclusión..." value="q" aria-label="Conclusión" />
         </div>
 
-        <!-- Botones -->
         <div class="actions">
             <div class="actions-left">
                 <button class="btn btn-outline" id="clearBtn" type="button">Limpiar</button>
@@ -80,7 +76,6 @@
             </div>
         </div>
 
-        <!-- (Opcional) Área de resultados - placeholder para después -->
         <div class="result" id="resultBox" aria-live="polite"></div>
     </section>
 </main>
