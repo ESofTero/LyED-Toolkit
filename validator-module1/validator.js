@@ -1,4 +1,4 @@
-(function () {
+document.addEventListener("DOMContentLoaded", function () {
     let MAX = 10;
     let MIN = 1;
 
@@ -8,6 +8,16 @@
     let conclusionInput = document.getElementById("conclusionInput");
     let resultBox = document.getElementById("resultBox");
     let clearBtn = document.getElementById("clearBtn");
+    let criticalBtn = document.getElementById("criticalBtn");
+    let tautBtn = document.getElementById("tautBtn");
+
+    // ✅ Si falta algo, no revientes toda la app
+    if (!hypothesesEl || !addBtn || !countText || !conclusionInput || !resultBox || !clearBtn || !criticalBtn || !tautBtn) {
+        console.error("Falta un elemento en el DOM. Revisa IDs:", {
+            hypothesesEl, addBtn, countText, conclusionInput, resultBox, clearBtn, criticalBtn, tautBtn
+        });
+        return;
+    }
 
     function updateLabels() {
         let rows = hypothesesEl.querySelectorAll(".hyp-row");
@@ -20,6 +30,20 @@
 
         if (rows.length >= MAX) addBtn.classList.add("hidden");
         else addBtn.classList.remove("hidden");
+
+        if (rows.length <= MIN) {
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].classList.add("no-remove");
+                let removeBtn = rows[i].querySelector(".hyp-remove");
+                if (removeBtn) removeBtn.classList.add("hidden");
+            }
+        } else {
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].classList.remove("no-remove");
+                let removeBtn = rows[i].querySelector(".hyp-remove");
+                if (removeBtn) removeBtn.classList.remove("hidden");
+            }
+        }
     }
 
     function makeRow(value) {
@@ -49,7 +73,15 @@
         return row;
     }
 
-    // ✅ Un solo listener para quitar (evita duplicados)
+    addBtn.addEventListener("click", function () {
+        let rows = hypothesesEl.querySelectorAll(".hyp-row");
+        if (rows.length >= MAX) return;
+
+        hypothesesEl.appendChild(makeRow(""));
+        updateLabels();
+        resultBox.textContent = "";
+    });
+
     hypothesesEl.addEventListener("click", function (e) {
         let btn = e.target.closest(".hyp-remove");
         if (!btn) return;
@@ -64,18 +96,6 @@
         resultBox.textContent = "";
     });
 
-    addBtn.addEventListener("click", function () {
-        if (addBtn.dataset.busy === "1") return;
-        addBtn.dataset.busy = "1";
-        setTimeout(() => addBtn.dataset.busy = "0", 0);
-
-        let rows = hypothesesEl.querySelectorAll(".hyp-row");
-        if (rows.length >= MAX) return;
-
-        hypothesesEl.appendChild(makeRow(""));
-        updateLabels();
-    });
-
     clearBtn.addEventListener("click", function () {
         hypothesesEl.innerHTML = "";
         hypothesesEl.appendChild(makeRow(""));
@@ -85,13 +105,13 @@
         updateLabels();
     });
 
-    document.getElementById("criticalBtn").addEventListener("click", function () {
+    criticalBtn.addEventListener("click", function () {
         resultBox.textContent = "Listo: aquí irá la validación por Renglón Crítico (pendiente).";
     });
 
-    document.getElementById("tautBtn").addEventListener("click", function () {
+    tautBtn.addEventListener("click", function () {
         resultBox.textContent = "Listo: aquí irá la validación por Tautología (pendiente).";
     });
 
     updateLabels();
-})();
+});
