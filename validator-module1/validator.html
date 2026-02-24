@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validador - LyED ToolKit</title>
+    <link rel="stylesheet" href="validator.css" />
+</head>
+<body>
+
+<!-- Top bar -->
+<header class="topbar">
+    <div class="topbar-left">
+        <a class="back-link" href="../index.html">← Volver</a>
+        <span class="topbar-sep">/</span>
+        <span class="topbar-title">LyED ToolKit</span>
+    </div>
+    <div class="topbar-right">MÓDULO 1</div>
+</header>
+
+<main class="page">
+
+    <section class="card">
+        <section class="hero">
+            <div class="title-line" aria-hidden="true"></div>
+            <h1>Lógica Proposicional: <span class="sub_line">Validador de argumentos</span></h1>
+            <p>Ingrese las hipótesis y la conclusión para evaluar la validez del argumento.</p>
+            <div class="mini-line" aria-hidden="true"></div>
+        </section>
+        <!-- Hipótesis -->
+        <div class="section-header">
+            <div class="section-title">
+                <span class="section-bar"></span>
+                <span>HIPÓTESIS</span>
+                <span class="section-count" id="countText">(2/10)</span>
+            </div>
+        </div>
+
+        <div class="hypotheses" id="hypotheses">
+            <!-- Filas iniciales (2) -->
+            <div class="hyp-row">
+                <div class="hyp-label">H1</div>
+                <input class="hyp-input" type="text" placeholder="Escribe una hipótesis..." value="p → q" />
+                <button class="hyp-remove" type="button" title="Quitar hipótesis">–</button>
+            </div>
+
+            <div class="hyp-row">
+                <div class="hyp-label">H2</div>
+                <input class="hyp-input" type="text" placeholder="Escribe una hipótesis..." value="p" />
+                <button class="hyp-remove" type="button" title="Quitar hipótesis">–</button>
+            </div>
+        </div>
+
+        <button class="add-hyp" id="addHypBtn" type="button">+ Agregar hipótesis</button>
+
+        <div class="divider"></div>
+
+        <!-- Conclusión -->
+        <div class="section-header">
+            <div class="section-title">
+                <span class="section-bar"></span>
+                <span>CONCLUSIÓN</span>
+            </div>
+        </div>
+
+        <div class="conclusion">
+            <div class="concl-icon">∴</div>
+            <input id="conclusionInput" class="concl-input" type="text" placeholder="Escribe la conclusión..." value="q" />
+        </div>
+
+        <!-- Botones -->
+        <div class="actions">
+            <div class="actions-left">
+                <button class="btn btn-outline" id="clearBtn" type="button">Limpiar</button>
+            </div>
+
+            <div class="actions-right">
+                <button class="btn btn-solid" id="criticalBtn" type="button">Renglón Crítico</button>
+                <button class="btn btn-solid" id="tautBtn" type="button">Tautología</button>
+            </div>
+        </div>
+
+        <!-- (Opcional) Área de resultados - placeholder para después -->
+        <div class="result" id="resultBox" aria-live="polite"></div>
+    </section>
+</main>
+
+<script src="validator.js"></script>
+</body>
+</html>
