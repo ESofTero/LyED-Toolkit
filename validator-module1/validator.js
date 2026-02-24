@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
         hypothesesEl.appendChild(makeRow(""));
         updateLabels();
         resultBox.textContent = "";
-    });
+    }, false);
 
     hypothesesEl.addEventListener("click", function (e) {
         let btn = e.target.closest(".hyp-remove");
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         updateLabels();
         resultBox.textContent = "";
-    });
+    }, false);
 
     clearBtn.addEventListener("click", function () {
         hypothesesEl.innerHTML = "";

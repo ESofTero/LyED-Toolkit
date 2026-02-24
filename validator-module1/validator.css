@@ -3,10 +3,11 @@
 body{
     margin: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue";
-    min-height: 100svh;
+    min-height: 100vh;
     color: #ffffff;
     background: linear-gradient(270deg, #815c97, #230443);
-    overflow-x: hidden; /* evita “saltos” raros en desktop */
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* Top bar */
@@ -45,15 +46,19 @@ body{
 /* Page */
 .page{
     padding: 56px 16px 72px;
-    display: grid;
-    justify-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
 }
 
 .hero{
-    width: min(980px, 100%);
+    width: min(520px, 100%);
     text-align: center;
     margin-bottom: 22px;
     display: grid;
+    grid-template-columns: 1fr;
     justify-items: center;
     gap: 15px;
 }
@@ -101,6 +106,7 @@ body{
     border: 1px solid rgba(255,255,255,.35);
     padding: clamp(26px, 3.5vw, 44px);
     position: relative;
+    contain: layout style paint;
 }
 
 .card::after{
@@ -149,6 +155,7 @@ body{
 .hypotheses{
     display: grid;
     gap: 12px;
+    width: 100%;
 }
 
 .hyp-row{
