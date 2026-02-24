@@ -19,11 +19,27 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    // Protección global ligera: mostrar mensaje amigable y evitar que errores no capturados crasheen la interacción.
+    window.addEventListener('error', function (ev) {
+        console.error('Error no capturado:', ev.error || ev.message, ev);
+        try {
+            if (resultBox) resultBox.textContent = 'Se produjo un error inesperado. Revisa la consola para más detalles.';
+        } catch (e) { /* no-op */ }
+        // No prevengas el default para que la consola siga recibiendo la información.
+    });
+
     function updateLabels() {
+        // Tomamos una snapshot estática
         let rows = hypothesesEl.querySelectorAll(".hyp-row");
 
         for (let i = 0; i < rows.length; i++) {
-            rows[i].querySelector(".hyp-label").textContent = "H" + (i + 1);
+            try {
+                let lbl = rows[i].querySelector(".hyp-label");
+                if (lbl) lbl.textContent = "H" + (i + 1);
+            } catch (err) {
+                // Si hay un nodo inesperado, no abortamos todo el proceso
+                console.warn('updateLabels: fila sin label o con problema', err);
+            }
         }
 
         countText.textContent = "(" + rows.length + "/" + MAX + ")";
@@ -54,6 +70,8 @@ document.addEventListener("DOMContentLoaded", function () {
         input.className = "hyp-input";
         input.type = "text";
         input.placeholder = "Escribe una hipótesis...";
+        // Limitar tamaño para evitar entradas excesivamente largas que puedan causar problemas
+        input.maxLength = 200;
         input.value = value || "";
 
         let remove = document.createElement("button");
@@ -69,45 +87,82 @@ document.addEventListener("DOMContentLoaded", function () {
         return row;
     }
 
-    addBtn.addEventListener("click", function () {
-        let rows = hypothesesEl.querySelectorAll(".hyp-row");
-        if (rows.length >= MAX) return;
+    // Evita clicks rápidos que podrían crear condiciones inusuales
+    function temporaryDisable(el, ms) {
+        if (!el) return;
+        el.disabled = true;
+        setTimeout(() => { try { el.disabled = false; } catch(e){} }, ms || 150);
+    }
 
-        hypothesesEl.appendChild(makeRow(""));
-        updateLabels();
-        resultBox.textContent = "";
+    addBtn.addEventListener("click", function () {
+        try {
+            let rows = hypothesesEl.querySelectorAll(".hyp-row");
+            if (rows.length >= MAX) return;
+
+            hypothesesEl.appendChild(makeRow(""));
+            updateLabels();
+            resultBox.textContent = "";
+
+            temporaryDisable(addBtn, 150);
+        } catch (err) {
+            console.error('Error en addBtn click:', err);
+            resultBox.textContent = 'Error al agregar hipótesis. Revisa la consola.';
+        }
     });
 
     hypothesesEl.addEventListener("click", function (e) {
-        let btn = e.target.closest(".hyp-remove");
-        if (!btn) return;
+        try {
+            let btn = e.target.closest(".hyp-remove");
+            if (!btn) return;
 
-        let rows = hypothesesEl.querySelectorAll(".hyp-row");
-        if (rows.length <= MIN) return;
+            let rows = hypothesesEl.querySelectorAll(".hyp-row");
+            if (rows.length <= MIN) return;
 
-        let row = btn.closest(".hyp-row");
-        if (row) row.remove();
+            let row = btn.closest(".hyp-row");
+            if (row) row.remove();
 
-        updateLabels();
-        resultBox.textContent = "";
+            updateLabels();
+            resultBox.textContent = "";
+        } catch (err) {
+            console.error('Error al quitar hipótesis:', err);
+            resultBox.textContent = 'Error al quitar hipótesis. Revisa la consola.';
+        }
     });
 
     clearBtn.addEventListener("click", function () {
-        hypothesesEl.innerHTML = "";
-        hypothesesEl.appendChild(makeRow(""));
-        hypothesesEl.appendChild(makeRow(""));
-        conclusionInput.value = "";
-        resultBox.textContent = "";
-        updateLabels();
+        try {
+            hypothesesEl.innerHTML = "";
+            hypothesesEl.appendChild(makeRow(""));
+            hypothesesEl.appendChild(makeRow(""));
+            conclusionInput.value = "";
+            resultBox.textContent = "";
+            updateLabels();
+        } catch (err) {
+            console.error('Error en clearBtn click:', err);
+            resultBox.textContent = 'Error al limpiar. Revisa la consola.';
+        }
     });
 
     criticalBtn.addEventListener("click", function () {
-        resultBox.textContent = "Listo: aquí irá la validación por Renglón Crítico (pendiente).";
+        try {
+            resultBox.textContent = "Listo: aquí irá la validación por Renglón Crítico (pendiente).";
+        } catch (err) {
+            console.error('Error en criticalBtn click:', err);
+            resultBox.textContent = 'Error en validación. Revisa la consola.';
+        }
     });
 
     tautBtn.addEventListener("click", function () {
-        resultBox.textContent = "Listo: aquí irá la validación por Tautología (pendiente).";
+        try {
+            resultBox.textContent = "Listo: aquí irá la validación por Tautología (pendiente).";
+        } catch (err) {
+            console.error('Error en tautBtn click:', err);
+            resultBox.textContent = 'Error en validación. Revisa la consola.';
+        }
     });
+
+    // Limita la longitud de la conclusión también (defensa sobre entradas grandes)
+    try { conclusionInput.maxLength = 200; } catch(e) {}
 
     updateLabels();
 });
