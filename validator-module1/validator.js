@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // ✅ Evita doble inicialización (causa #1 de freezes/crashes)
+    if (window.__LYED_VALIDATOR_INIT__) return;
+    window.__LYED_VALIDATOR_INIT__ = true;
+
     let MAX = 10;
     let MIN = 1;
 
@@ -11,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let criticalBtn = document.getElementById("criticalBtn");
     let tautBtn = document.getElementById("tautBtn");
 
-    // ✅ Si falta algo, no revientes toda la app
     if (!hypothesesEl || !addBtn || !countText || !conclusionInput || !resultBox || !clearBtn || !criticalBtn || !tautBtn) {
         console.error("Falta un elemento en el DOM. Revisa IDs:", {
             hypothesesEl, addBtn, countText, conclusionInput, resultBox, clearBtn, criticalBtn, tautBtn
@@ -23,22 +26,45 @@ document.addEventListener("DOMContentLoaded", function () {
         let rows = hypothesesEl.querySelectorAll(".hyp-row");
 
         for (let i = 0; i < rows.length; i++) {
-            rows[i].querySelector(".hyp-label").textContent = "H" + (i + 1);
+            let labelEl = rows[i].querySelector(".hyp-label");
+            if (labelEl) labelEl.textContent = "H" + (i + 1);
+
+            // (opcional) mejorar accesibilidad sin cambiar CSS
+            let inputEl = rows[i].querySelector(".hyp-input");
+            if (inputEl) inputEl.setAttribute("aria-label", "Hipótesis " + (i + 1));
+
+            let removeBtn = rows[i].querySelector(".hyp-remove");
+            if (removeBtn) removeBtn.setAttribute("aria-label", "Quitar hipótesis " + (i + 1));
         }
 
         countText.textContent = "(" + rows.length + "/" + MAX + ")";
 
+        // Botón agregar: se oculta en 10
         if (rows.length >= MAX) addBtn.classList.add("hidden");
         else addBtn.classList.remove("hidden");
 
-        let removeBtns = hypothesesEl.querySelectorAll(".hyp-remove");
-
+        // ✅ Si solo hay 1 fila:
+        // - alargar el input (grid sin 3ra columna)
+        // - quitar físicamente los botones "-" del DOM (evita rarezas de layout)
         if (rows.length <= MIN) {
-            for (let i = 0; i < rows.length; i++) rows[i].classList.add("no-remove");
-            for (let i = 0; i < removeBtns.length; i++) removeBtns[i].classList.add("hidden");
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].classList.add("no-remove");
+                let remove = rows[i].querySelector(".hyp-remove");
+                if (remove) remove.remove();
+            }
         } else {
-            for (let i = 0; i < rows.length; i++) rows[i].classList.remove("no-remove");
-            for (let i = 0; i < removeBtns.length; i++) removeBtns[i].classList.remove("hidden");
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].classList.remove("no-remove");
+                // si por alguna razón el botón no existe, lo recreamos
+                if (!rows[i].querySelector(".hyp-remove")) {
+                    let btn = document.createElement("button");
+                    btn.className = "hyp-remove";
+                    btn.type = "button";
+                    btn.title = "Quitar hipótesis";
+                    btn.textContent = "–";
+                    rows[i].appendChild(btn);
+                }
+            }
         }
     }
 
@@ -69,7 +95,10 @@ document.addEventListener("DOMContentLoaded", function () {
         return row;
     }
 
-    addBtn.addEventListener("click", function () {
+    // ✅ Agregar
+    addBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+
         let rows = hypothesesEl.querySelectorAll(".hyp-row");
         if (rows.length >= MAX) return;
 
@@ -78,9 +107,12 @@ document.addEventListener("DOMContentLoaded", function () {
         resultBox.textContent = "";
     });
 
+    // ✅ Quitar (delegación)
     hypothesesEl.addEventListener("click", function (e) {
         let btn = e.target.closest(".hyp-remove");
         if (!btn) return;
+
+        e.preventDefault();
 
         let rows = hypothesesEl.querySelectorAll(".hyp-row");
         if (rows.length <= MIN) return;
@@ -92,7 +124,9 @@ document.addEventListener("DOMContentLoaded", function () {
         resultBox.textContent = "";
     });
 
-    clearBtn.addEventListener("click", function () {
+    clearBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+
         hypothesesEl.innerHTML = "";
         hypothesesEl.appendChild(makeRow(""));
         hypothesesEl.appendChild(makeRow(""));
