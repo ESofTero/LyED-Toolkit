@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
+    if (window.__LYED_VALIDATOR_INIT__) return;
+    window.__LYED_VALIDATOR_INIT__ = true;
+
     let MAX = 10;
     let MIN = 1;
 
