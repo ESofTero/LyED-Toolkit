@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearBtn = document.getElementById("clearBtn");
     const criticalBtn = document.getElementById("criticalBtn");
     const tautBtn = document.getElementById("tautBtn");
+    const exampleBtn = document.getElementById("exampleBtn");
 
     const banner = document.getElementById("banner");
     const bannerTitle = document.getElementById("bannerTitle");
@@ -104,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // conclusión con “subíndice” tipo las hipótesis
-        html += `<th>∴ ${headerConcl}<div class="truth-small">(q)</div></th>`;
+        html += `<th>∴ ${headerConcl}<div class="truth-small">(Q)</div></th>`;
 
         if (method === "taut") {
             html += `<th>${tautHeader}</th>`;
@@ -302,6 +303,32 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         false
     );
+
+    if (exampleBtn) {
+        exampleBtn.addEventListener("click", function () {
+
+            // Limpiar hipótesis y conclusión
+            hypothesesEl.innerHTML = "";
+
+            // Agrega exactamente 2 hipótesis
+            hypothesesEl.appendChild(makeRow("p -> q"));
+            hypothesesEl.appendChild(makeRow("p"));
+
+            // Conclusión
+            conclusionInput.value = "q";
+
+            updateLabels();
+            clearOutputs();
+
+            // Ejecuta automáticamente Tautología
+            if (typeof compute === "function") {
+                compute("taut");
+            } else {
+                tautBtn.click();
+            }
+
+        });
+    }
 
     clearBtn.addEventListener("click", () => {
         hypothesesEl.innerHTML = "";
