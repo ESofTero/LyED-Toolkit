@@ -222,7 +222,10 @@
     const collectVars = (rawList) => {
         const joined = rawList.map(normalize).join(" ");
         const found = joined.match(/[A-Za-z]/g) || [];
-        const uniq = Array.from(new Set(found));
+
+        const filtered = found.filter((c) => c !== "v" && c !== "V");
+
+        const uniq = Array.from(new Set(filtered));
         uniq.sort((a, b) => a.localeCompare(b));
         return uniq;
     };
