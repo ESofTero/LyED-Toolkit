@@ -315,3 +315,168 @@ body{
     .hyp-row{ grid-template-columns: 40px 1fr 40px; }
     .card{ padding: 22px; }
 }
+
+/* =========================
+   Banner resultado
+========================= */
+.banner{
+    margin-top: 18px;
+    width: 100%;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(35,4,67,.25);
+    color: rgba(255,255,255,.92);
+    padding: 18px 18px;
+    display: grid;
+    grid-template-columns: 44px 1fr 32px;
+    gap: 14px;
+    align-items: center;
+    box-shadow: 0 14px 30px rgba(0,0,0,.18);
+}
+
+.banner-icon{
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.16);
+}
+
+.banner-title{
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+}
+
+.banner-sub{
+    margin-top: 4px;
+    opacity: .85;
+    line-height: 1.3;
+}
+
+.banner-close{
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,.70);
+    font-size: 22px;
+    font-weight: 900;
+    cursor: pointer;
+}
+.banner-close:hover{ color: rgba(255,255,255,.95); }
+
+.banner.ok{ background: rgba(129,92,151,.28); }
+.banner.bad{ background: rgba(35,4,67,.32); }
+.banner.vac{ background: rgba(171,144,185,.22); }
+
+/* =========================
+   Tabla de verdad
+========================= */
+.truth{
+    margin-top: 18px;
+    width: 100%;
+    background: rgba(255,255,255,.96);
+    color: #230443;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,.35);
+    box-shadow: 0 18px 45px rgba(0,0,0,.18);
+    overflow: hidden;
+}
+
+.truth-head{
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(35,4,67,.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.truth-title{
+    font-weight: 900;
+    letter-spacing: .16em;
+    font-size: 12px;
+    color: rgba(35,4,67,.70);
+}
+
+.truth-meta{
+    letter-spacing: 0;
+    font-weight: 800;
+    color: rgba(171,144,185,.95);
+    margin-left: 6px;
+}
+
+.truth-chip{
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 2px solid rgba(171,144,185,.55);
+    background: rgba(234,223,240,.55);
+    color: rgba(35,4,67,.72);
+    font-weight: 900;
+    font-size: 13px;
+}
+
+.truth-wrap{
+    width: 100%;
+    overflow: auto;            /* scroll horizontal/vertical */
+    max-height: 420px;         /* scroll vertical */
+}
+
+.truth-table{
+    width: 100%;
+    min-width: 760px;          /* para que haya scroll si faltan pixeles */
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.truth-table thead th{
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: rgba(255,255,255,.98);
+    border-bottom: 2px solid rgba(171,144,185,.55);
+    font-weight: 900;
+    padding: 14px 12px;
+    text-align: center;
+}
+
+.truth-table tbody td{
+    padding: 14px 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(35,4,67,.06);
+    border-right: 1px solid rgba(35,4,67,.06);
+}
+
+.truth-table thead th:not(:last-child),
+.truth-table tbody td:not(:last-child){
+    border-right: 1px solid rgba(35,4,67,.06);
+}
+
+.truth-table tbody tr:nth-child(odd){
+    background: rgba(234,223,240,.25);
+}
+
+.truth-table tbody tr.critical{
+    background: rgba(171,144,185,.20);
+}
+
+.truth-table tbody tr.critical.bad{
+    background: rgba(35,4,67,.12);
+}
+
+.truth-sym{
+    font-weight: 900;
+    letter-spacing: .02em;
+}
+
+.truth-small{
+    font-size: 12px;
+    opacity: .6;
+    margin-top: 6px;
+}
+
+/* utilidad */
+.hidden { display: none !important; }

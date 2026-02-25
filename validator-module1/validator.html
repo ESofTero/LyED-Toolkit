@@ -67,6 +67,7 @@
 
         <div class="actions">
             <div class="actions-left">
+                <button class="btn btn-outline" id="exampleBtn" type="button">Ver ejemplo</button>
                 <button class="btn btn-outline" id="clearBtn" type="button">Limpiar</button>
             </div>
 
@@ -76,10 +77,34 @@
             </div>
         </div>
 
+        <!-- Banner resultado -->
+        <section class="banner hidden" id="banner" aria-live="polite">
+            <div class="banner-icon" id="bannerIcon">!</div>
+            <div class="banner-text">
+                <div class="banner-title" id="bannerTitle">Resultado</div>
+                <div class="banner-sub" id="bannerSub">—</div>
+            </div>
+            <button class="banner-close" id="bannerClose" type="button" aria-label="Cerrar">×</button>
+        </section>
+
+        <!-- Tabla de verdad -->
+        <section class="truth hidden" id="truthSection">
+            <div class="truth-head">
+                <div class="truth-title">
+                    TABLA DE VERDAD <span class="truth-meta" id="truthMeta">· 0 renglones</span>
+                </div>
+                <div class="truth-chip" id="truthChip">—</div>
+            </div>
+
+            <div class="truth-wrap" id="truthWrap"></div>
+        </section>
+
         <div class="result" id="resultBox" aria-live="polite"></div>
     </section>
 </main>
 
+<!-- 👇 Primero lógica, luego UI -->
+<script src="logic.js"></script>
 <script src="validator.js"></script>
 </body>
 </html>
