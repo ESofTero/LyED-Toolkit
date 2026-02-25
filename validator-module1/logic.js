@@ -21,15 +21,23 @@
     const normalize = (s) => {
         let x = String(s || "").trim();
 
-        // normaliza flecha
+        // Flecha
         x = x.replace(/→/g, "->");
-        // normaliza operadores alternativos
-        x = x.replace(/¬/g, "~").replace(/!/g, "~");
-        x = x.replace(/∧/g, "^").replace(/&/g, "^");
-        x = x.replace(/∨/g, "v").replace(/\|/g, "v");
 
-        // quita espacios redundantes
+        // Negación
+        x = x.replace(/¬/g, "~").replace(/!/g, "~");
+
+        // Conjunción
+        x = x.replace(/∧/g, "^").replace(/&/g, "^");
+
+        // Disyunción (AQUÍ ESTÁ EL FIX)
+        x = x.replace(/∨/g, "v");
+        x = x.replace(/\|\|/g, "v");
+        x = x.replace(/\|/g, "v");
+
+        // Quitar espacios extra
         x = x.replace(/\s+/g, " ").trim();
+
         return x;
     };
 

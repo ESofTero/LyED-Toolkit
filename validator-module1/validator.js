@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!res.hasCritical) {
                     showBanner(
                         "vac",
-                        "Argumento vacuo",
+                        "Argumento vacío",
                         "No hay renglón crítico (las premisas nunca son verdaderas a la vez).",
                         "!"
                     );
