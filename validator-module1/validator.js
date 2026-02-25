@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
             hypothesesEl.innerHTML = "";
 
             // Agrega exactamente 2 hipótesis
-            hypothesesEl.appendChild(makeRow("p -> q"));
+            hypothesesEl.appendChild(makeRow("p → q"));
             hypothesesEl.appendChild(makeRow("p"));
 
             // Conclusión
