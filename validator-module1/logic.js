@@ -1,297 +1,301 @@
+/* logic.js
+   LyEDLogic: Parser + Evaluador + Tabla de verdad
+   Símbolos soportados (input):
+   - Negación: ~  ¬  !
+   - Conjunción: ^  ∧  &
+   - Disyunción: v  ∨  |
+   - Implicación: ->  >  →
+   - Paréntesis: ( )
+   - Variables: letras (p, q, r, A, B...)
+*/
 (() => {
-    "use strict";
+    if (window.LyEDLogic) return;
 
-    const normalizeFormula = (input) => {
-        let s = String(input ?? "").trim();
-        s = s.replace(/\s+/g, " ");
-
-        // símbolos comunes
-        s = s.replace(/¬/g, "~");
-        s = s.replace(/∧/g, "^");
-        s = s.replace(/∨/g, "v");
-        s = s.replace(/→/g, "->");
-        s = s.replace(/↔/g, "<->");
-
-        return s;
+    const OPS = {
+        NOT: "NOT",
+        AND: "AND",
+        OR: "OR",
+        IMP: "IMP",
     };
 
-    const prettyFormula = (input) => {
-        const s = normalizeFormula(input);
-        return s
-            .replace(/\^/g, "∧")
-            .replace(/\bv\b/g, "∨")
-            .replace(/~/g, "¬")
-            .replace(/->/g, "→")
-            .replace(/<->/g, "↔");
+    const normalize = (s) => {
+        let x = String(s || "").trim();
+
+        // normaliza flecha
+        x = x.replace(/→/g, "->");
+        // normaliza operadores alternativos
+        x = x.replace(/¬/g, "~").replace(/!/g, "~");
+        x = x.replace(/∧/g, "^").replace(/&/g, "^");
+        x = x.replace(/∨/g, "v").replace(/\|/g, "v");
+
+        // quita espacios redundantes
+        x = x.replace(/\s+/g, " ").trim();
+        return x;
     };
 
-    const extractVars = (formulas) => {
-        const set = new Set();
-
-        for (const f of formulas) {
-            const s = normalizeFormula(f);
-            for (let i = 0; i < s.length; i++) {
-                const c = s[i];
-                if (/[A-Za-z]/.test(c)) {
-                    // "v" lo tratamos como OR, no como variable
-                    if (c === "v" || c === "V") continue;
-                    set.add(c);
-                }
-            }
-        }
-
-        return Array.from(set).sort((a, b) => a.localeCompare(b));
+    const prettyFormula = (s) => {
+        let x = normalize(s);
+        x = x.replace(/->/g, "→");
+        x = x.replace(/~/g, "¬");
+        // ojo: "v" como OR (solo cuando es operador)
+        // aquí asumimos que el usuario usa v como OR, no como variable.
+        x = x.replace(/v/g, "∨");
+        x = x.replace(/\^/g, "∧");
+        return x;
     };
 
-    const tokenize = (formula) => {
-        const s = normalizeFormula(formula);
+    const tokenize = (raw) => {
+        const s = normalize(raw);
+        if (!s) throw new Error("Fórmula vacía.");
+
         const tokens = [];
         let i = 0;
 
-        while (i < s.length) {
-            const ch = s[i];
+        const isLetter = (c) => /[A-Za-z]/.test(c);
 
-            if (ch === " ") {
+        while (i < s.length) {
+            const c = s[i];
+
+            if (c === " ") {
                 i++;
                 continue;
             }
 
-            // operadores largos primero
-            if (s.slice(i, i + 3) === "<->") {
-                tokens.push({ type: "op", value: "<->" });
-                i += 3;
-                continue;
-            }
-            if (s.slice(i, i + 2) === "->") {
-                tokens.push({ type: "op", value: "->" });
+            // Implicación "->"
+            if (c === "-" && s[i + 1] === ">") {
+                tokens.push({ type: OPS.IMP });
                 i += 2;
                 continue;
             }
 
-            // operadores simples
-            if (ch === "~" || ch === "^" || ch === "v") {
-                tokens.push({ type: "op", value: ch });
-                i++;
+            // Implicación ">"
+            if (c === ">") {
+                tokens.push({ type: OPS.IMP });
+                i += 1;
                 continue;
             }
 
-            // paréntesis
-            if (ch === "(" || ch === ")") {
-                tokens.push({ type: "paren", value: ch });
-                i++;
+            // NOT
+            if (c === "~") {
+                tokens.push({ type: OPS.NOT });
+                i += 1;
                 continue;
             }
 
-            // variables (una letra)
-            if (/[A-Za-z]/.test(ch)) {
-                if (ch === "v" || ch === "V") {
-                    tokens.push({ type: "op", value: "v" });
-                } else {
-                    tokens.push({ type: "var", value: ch });
-                }
-                i++;
+            // AND
+            if (c === "^") {
+                tokens.push({ type: OPS.AND });
+                i += 1;
                 continue;
             }
 
-            throw new Error(`Carácter inválido: '${ch}'`);
+            // OR
+            if (c === "v") {
+                tokens.push({ type: OPS.OR });
+                i += 1;
+                continue;
+            }
+
+            // Paréntesis
+            if (c === "(" || c === ")") {
+                tokens.push({ type: c });
+                i += 1;
+                continue;
+            }
+
+            // Variable
+            if (isLetter(c)) {
+                tokens.push({ type: "VAR", name: c });
+                i += 1;
+                continue;
+            }
+
+            throw new Error(`Símbolo no válido: "${c}"`);
         }
 
         return tokens;
     };
 
-    const precedence = (op) => {
-        if (op === "~") return 5;
-        if (op === "^") return 4;
-        if (op === "v") return 3;
-        if (op === "->") return 2;
-        if (op === "<->") return 1;
-        return 0;
-    };
+    // Parser (precedencia):
+    // NOT > AND > OR > IMP (derecha-asociativa)
+    const parse = (raw) => {
+        const tokens = tokenize(raw);
+        let pos = 0;
 
-    const isRightAssociative = (op) => {
-        // negación y condicional suelen ser derecha-asociativos
-        return op === "~" || op === "->";
-    };
+        const peek = () => tokens[pos];
+        const consume = () => tokens[pos++];
 
-    const toRPN = (tokens) => {
-        const out = [];
-        const stack = [];
+        const parsePrimary = () => {
+            const t = peek();
+            if (!t) throw new Error("Fórmula incompleta.");
 
-        for (const t of tokens) {
-            if (t.type === "var") {
-                out.push(t);
-                continue;
+            if (t.type === "VAR") {
+                consume();
+                return { type: "VAR", name: t.name };
             }
 
-            if (t.type === "op") {
-                const o1 = t.value;
-
-                while (stack.length > 0) {
-                    const top = stack[stack.length - 1];
-                    if (top.type !== "op") break;
-
-                    const o2 = top.value;
-                    const p1 = precedence(o1);
-                    const p2 = precedence(o2);
-
-                    const shouldPop =
-                        (!isRightAssociative(o1) && p1 <= p2) ||
-                        (isRightAssociative(o1) && p1 < p2);
-
-                    if (shouldPop) out.push(stack.pop());
-                    else break;
-                }
-
-                stack.push(t);
-                continue;
+            if (t.type === "(") {
+                consume();
+                const expr = parseImp();
+                const close = peek();
+                if (!close || close.type !== ")") throw new Error("Falta ')'.");
+                consume();
+                return expr;
             }
 
-            if (t.type === "paren" && t.value === "(") {
-                stack.push(t);
-                continue;
+            if (t.type === OPS.NOT) {
+                consume();
+                return { type: OPS.NOT, expr: parsePrimary() };
             }
 
-            if (t.type === "paren" && t.value === ")") {
-                let found = false;
+            throw new Error("Token inesperado en la fórmula.");
+        };
 
-                while (stack.length > 0) {
-                    const x = stack.pop();
-                    if (x.type === "paren" && x.value === "(") {
-                        found = true;
-                        break;
-                    }
-                    out.push(x);
-                }
-
-                if (!found) throw new Error("Paréntesis desbalanceados.");
+        const parseAnd = () => {
+            let left = parsePrimary();
+            while (peek() && peek().type === OPS.AND) {
+                consume();
+                const right = parsePrimary();
+                left = { type: OPS.AND, left, right };
             }
+            return left;
+        };
+
+        const parseOr = () => {
+            let left = parseAnd();
+            while (peek() && peek().type === OPS.OR) {
+                consume();
+                const right = parseAnd();
+                left = { type: OPS.OR, left, right };
+            }
+            return left;
+        };
+
+        // Implicación derecha-asociativa
+        const parseImp = () => {
+            let left = parseOr();
+            if (peek() && peek().type === OPS.IMP) {
+                consume();
+                const right = parseImp();
+                return { type: OPS.IMP, left, right };
+            }
+            return left;
+        };
+
+        const ast = parseImp();
+
+        if (pos !== tokens.length) {
+            throw new Error("Hay símbolos sobrantes (revisa paréntesis u operadores).");
         }
 
-        while (stack.length > 0) {
-            const last = stack.pop();
-            if (last.type === "paren") throw new Error("Paréntesis desbalanceados.");
-            out.push(last);
-        }
-
-        return out;
+        return ast;
     };
 
-    const evalRPN = (rpn, env) => {
-        const st = [];
-
-        for (const t of rpn) {
-            if (t.type === "var") {
-                if (!(t.value in env)) throw new Error(`Variable sin valor: ${t.value}`);
-                st.push(Boolean(env[t.value]));
-                continue;
+    const evalAst = (node, env) => {
+        switch (node.type) {
+            case "VAR":
+                return Boolean(env[node.name]);
+            case OPS.NOT:
+                return !evalAst(node.expr, env);
+            case OPS.AND:
+                return evalAst(node.left, env) && evalAst(node.right, env);
+            case OPS.OR:
+                return evalAst(node.left, env) || evalAst(node.right, env);
+            case OPS.IMP: {
+                const a = evalAst(node.left, env);
+                const b = evalAst(node.right, env);
+                return (!a) || b;
             }
-
-            if (t.type === "op") {
-                const op = t.value;
-
-                if (op === "~") {
-                    if (st.length < 1) throw new Error("Falta operando para negación.");
-                    st.push(!st.pop());
-                    continue;
-                }
-
-                if (st.length < 2) throw new Error(`Faltan operandos para '${op}'.`);
-                const b = st.pop();
-                const a = st.pop();
-
-                if (op === "^") st.push(a && b);
-                else if (op === "v") st.push(a || b);
-                else if (op === "->") st.push((!a) || b);
-                else if (op === "<->") st.push((a && b) || ((!a) && (!b)));
-                else throw new Error(`Operador desconocido: ${op}`);
-
-                continue;
-            }
-
-            throw new Error("Token inesperado.");
+            default:
+                throw new Error("AST inválido.");
         }
-
-        if (st.length !== 1) throw new Error("Expresión inválida.");
-        return st[0];
     };
 
-    const compile = (formula) => {
-        const tokens = tokenize(formula);
-        const rpn = toRPN(tokens);
-        return { raw: String(formula ?? ""), norm: normalizeFormula(formula), rpn };
+    const collectVars = (rawList) => {
+        const joined = rawList.map(normalize).join(" ");
+        const found = joined.match(/[A-Za-z]/g) || [];
+        const uniq = Array.from(new Set(found));
+        uniq.sort((a, b) => a.localeCompare(b));
+        return uniq;
     };
 
-    const buildValuations = (vars) => {
+    const makeEnvs = (vars) => {
         const n = vars.length;
         const total = 1 << n;
-        const list = [];
+        const envs = [];
 
         for (let mask = 0; mask < total; mask++) {
             const env = {};
             for (let i = 0; i < n; i++) {
+                // orden clásico: F/F... primero si quieres invierte, pero esto es estable
                 const bit = (mask >> (n - 1 - i)) & 1;
                 env[vars[i]] = bit === 1;
             }
-            list.push(env);
+            envs.push(env);
         }
-        return list;
+        return envs;
     };
 
-    /**
-     * method: "critical" | "taut"
-     */
-    const solve = (hypsRaw, conclRaw, method) => {
-        const all = [...hypsRaw, conclRaw];
-        const vars = extractVars(all);
-        if (vars.length === 0) throw new Error("No detecté variables (usa letras como p, q, r).");
+    const solve = (hypothesesRaw, conclusionRaw, method) => {
+        const hypsRaw = (hypothesesRaw || []).map((x) => String(x || "").trim()).filter(Boolean);
+        const conclRaw = String(conclusionRaw || "").trim();
 
-        const compiledHyps = hypsRaw.map((h) => compile(h));
-        const compiledConcl = compile(conclRaw);
+        if (hypsRaw.length < 1) throw new Error("Agrega al menos 1 hipótesis.");
+        if (!conclRaw) throw new Error("Escribe la conclusión.");
 
-        const valuations = buildValuations(vars);
+        const vars = collectVars([...hypsRaw, conclRaw]);
 
+        const hypAsts = hypsRaw.map(parse);
+        const conclAst = parse(conclRaw);
+
+        const envs = makeEnvs(vars);
+
+        const rows = [];
         let hasCritical = false;
         let isValid = true;
         let isTaut = true;
 
-        const rows = valuations.map((env) => {
-            const premVals = compiledHyps.map((c) => evalRPN(c.rpn, env));
-            const allPremTrue = premVals.every(Boolean);
-            const conclVal = evalRPN(compiledConcl.rpn, env);
+        for (let i = 0; i < envs.length; i++) {
+            const env = envs[i];
 
-            const critical = allPremTrue;
-            const badCritical = critical && !conclVal;
+            const premVals = hypAsts.map((ast) => evalAst(ast, env));
+            const conclVal = evalAst(conclAst, env);
+
+            const allPrem = premVals.every(Boolean);
+            const critical = allPrem;
+            const badCritical = allPrem && !conclVal;
+
+            const implVal = (!allPrem) || conclVal; // (premisas) → conclusión
 
             if (critical) hasCritical = true;
             if (badCritical) isValid = false;
+            if (!implVal) isTaut = false;
 
-            let implVal = true;
-            if (method === "taut") {
-                implVal = (!allPremTrue) || conclVal;
-                if (!implVal) isTaut = false;
-            }
+            rows.push({
+                env,
+                premVals,
+                conclVal,
+                critical,
+                badCritical,
+                implVal,
+            });
+        }
 
-            return { env, premVals, conclVal, critical, badCritical, implVal };
-        });
+        if (method === "critical") {
+            return { vars, rows, hasCritical, isValid };
+        }
+        if (method === "taut") {
+            return { vars, rows, isTaut };
+        }
 
-        return {
-            vars,
-            rows,
-            hasCritical,
-            isValid,
-            isTaut,
-            header: {
-                hyps: hypsRaw.map(prettyFormula),
-                concl: prettyFormula(conclRaw)
-            }
-        };
+        throw new Error("Método inválido (usa 'critical' o 'taut').");
     };
 
-    // Export global (para validator.js)
     window.LyEDLogic = {
-        normalizeFormula,
+        normalize,
         prettyFormula,
-        extractVars,
-        solve
+        tokenize,
+        parse,
+        solve,
     };
 })();

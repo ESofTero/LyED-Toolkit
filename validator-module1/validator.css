@@ -317,21 +317,54 @@ body{
 }
 
 /* =========================
-   Banner resultado
+   Caja símbolos válidos
+========================= */
+.symbols{
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(171,144,185,.45);
+    background: rgba(234,223,240,.45);
+    color: rgba(35,4,67,.70);
+    font-size: 13px;
+    line-height: 1.35;
+    text-align: center;
+}
+
+/* =========================
+   Banner resultado (más contraste)
 ========================= */
 .banner{
     margin-top: 18px;
     width: 100%;
     border-radius: 18px;
-    border: 1px solid rgba(255,255,255,.18);
-    background: rgba(35,4,67,.25);
-    color: rgba(255,255,255,.92);
+    border: 1px solid rgba(255,255,255,.22);
+    color: rgba(255,255,255,.95);
     padding: 18px 18px;
     display: grid;
     grid-template-columns: 44px 1fr 32px;
     gap: 14px;
     align-items: center;
-    box-shadow: 0 14px 30px rgba(0,0,0,.18);
+
+    /* contraste real */
+    box-shadow:
+            0 18px 40px rgba(0,0,0,.28),
+            inset 0 0 0 1px rgba(255,255,255,.10);
+}
+
+/* banda lateral para “señal” */
+.banner::before{
+    content:"";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 6px;
+    border-radius: 18px 0 0 18px;
+    background: rgba(255,255,255,.28);
+}
+
+.banner{
+    position: relative;
+    background: rgba(35,4,67,.55);
 }
 
 .banner-icon{
@@ -341,8 +374,8 @@ body{
     display: grid;
     place-items: center;
     font-weight: 900;
-    background: rgba(255,255,255,.14);
-    border: 1px solid rgba(255,255,255,.16);
+    background: rgba(0,0,0,.20);
+    border: 1px solid rgba(255,255,255,.18);
 }
 
 .banner-title{
@@ -353,23 +386,44 @@ body{
 
 .banner-sub{
     margin-top: 4px;
-    opacity: .85;
+    opacity: .92;
     line-height: 1.3;
 }
 
 .banner-close{
     border: none;
     background: transparent;
-    color: rgba(255,255,255,.70);
+    color: rgba(255,255,255,.75);
     font-size: 22px;
     font-weight: 900;
     cursor: pointer;
 }
-.banner-close:hover{ color: rgba(255,255,255,.95); }
+.banner-close:hover{ color: rgba(255,255,255,.98); }
 
-.banner.ok{ background: rgba(129,92,151,.28); }
-.banner.bad{ background: rgba(35,4,67,.32); }
-.banner.vac{ background: rgba(171,144,185,.22); }
+/* estados (más visibles) */
+.banner.ok{
+    background: rgba(129,92,151,.62);
+}
+.banner.ok::before{ background: rgba(255,255,255,.38); }
+
+.banner.bad{
+    background: rgba(35,4,67,.70);
+}
+.banner.bad::before{ background: rgba(255,255,255,.32); }
+
+.banner.vac{
+    /* vacuo ahora sí se nota */
+    background: rgba(171,144,185,.60);
+    color: rgba(35,4,67,.92);
+    border-color: rgba(35,4,67,.14);
+}
+.banner.vac .banner-close{ color: rgba(35,4,67,.60); }
+.banner.vac .banner-close:hover{ color: rgba(35,4,67,.90); }
+.banner.vac .banner-icon{
+    background: rgba(255,255,255,.55);
+    border-color: rgba(35,4,67,.10);
+}
+.banner.vac::before{ background: rgba(35,4,67,.18); }
 
 /* =========================
    Tabla de verdad
@@ -412,22 +466,22 @@ body{
 .truth-chip{
     padding: 8px 12px;
     border-radius: 12px;
-    border: 2px solid rgba(171,144,185,.55);
-    background: rgba(234,223,240,.55);
-    color: rgba(35,4,67,.72);
+    border: 2px solid rgba(171,144,185,.60);
+    background: rgba(234,223,240,.65);
+    color: rgba(35,4,67,.78);
     font-weight: 900;
     font-size: 13px;
 }
 
 .truth-wrap{
     width: 100%;
-    overflow: auto;            /* scroll horizontal/vertical */
-    max-height: 420px;         /* scroll vertical */
+    overflow: auto;
+    max-height: 420px;
 }
 
 .truth-table{
     width: 100%;
-    min-width: 760px;          /* para que haya scroll si faltan pixeles */
+    min-width: 760px;
     border-collapse: separate;
     border-spacing: 0;
 }
@@ -459,12 +513,20 @@ body{
     background: rgba(234,223,240,.25);
 }
 
+/* ✅ renglón crítico: ahora sí se ve “marcado” */
 .truth-table tbody tr.critical{
-    background: rgba(171,144,185,.20);
+    background: rgba(171,144,185,.30);
+    box-shadow:
+            inset 6px 0 0 rgba(129,92,151,.85),
+            inset 0 0 0 1px rgba(129,92,151,.20);
 }
 
+/* ✅ crítico “malo”: más fuerte todavía */
 .truth-table tbody tr.critical.bad{
-    background: rgba(35,4,67,.12);
+    background: rgba(35,4,67,.16);
+    box-shadow:
+            inset 6px 0 0 rgba(35,4,67,.92),
+            inset 0 0 0 1px rgba(35,4,67,.18);
 }
 
 .truth-sym{
