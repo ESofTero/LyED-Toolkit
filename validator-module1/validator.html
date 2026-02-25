@@ -25,6 +25,22 @@
             <h1>Lógica Proposicional: <span class="sub_line">Validador de argumentos</span></h1>
             <p>Ingrese las hipótesis y la conclusión para evaluar la validez del argumento.</p>
             <div class="mini-line" aria-hidden="true"></div>
+            <div class="help-wrapper">
+                <button type="button" id="helpToggle" class="help-btn" aria-expanded="false">
+                    ? Símbolos
+                </button>
+
+                <div id="symbolsBox" class="symbols hidden">
+                    <strong>Símbolos válidos:</strong><br>
+                    ¬  ~  → Negación<br>
+                    ∧  ^  → Conjunción (y)<br>
+                    ∨  v  |  → Disyunción (o)<br>
+                    →  ->  >  → Implicación<br>
+                    ( ) → Paréntesis<br>
+                    <br>
+                    Variables: letras como p, q, r, s...
+                </div>
+            </div>
         </section>
 
         <div class="section-header">

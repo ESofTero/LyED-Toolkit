@@ -111,6 +111,53 @@ body{
     position: relative;
 }
 
+/* =========================
+   Help símbolos
+========================= */
+
+.help-wrapper{
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.help-btn{
+    background: transparent;
+    border: 2px solid rgba(171,144,185,.55);
+    color: rgba(171,144,185,.95);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.help-btn:hover{
+    background: rgba(171,144,185,.15);
+    transform: translateY(-1px);
+}
+
+.symbols{
+    margin-top: 10px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(171,144,185,.45);
+    background: rgba(234,223,240,.65);
+    color: rgba(35,4,67,.85);
+    font-size: 13px;
+    line-height: 1.45;
+    max-width: 500px;
+    text-align: left;
+
+    animation: fadeIn .25s ease forwards;
+}
+
+@keyframes fadeIn{
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 
 
 /* Section header */

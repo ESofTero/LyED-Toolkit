@@ -26,10 +26,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const truthMeta = document.getElementById("truthMeta");
     const truthChip = document.getElementById("truthChip");
 
+    const helpToggle = document.getElementById("helpToggle");
     const symbolsBox = document.getElementById("symbolsBox"); // opcional
 
     const baseOk =
         hypothesesEl && addBtn && countText && conclusionInput && clearBtn && criticalBtn && tautBtn;
+
+
+    if (helpToggle && symbolsBox) {
+        helpToggle.addEventListener("click", () => {
+            const isHidden = symbolsBox.classList.contains("hidden");
+
+            symbolsBox.classList.toggle("hidden");
+            helpToggle.setAttribute("aria-expanded", String(isHidden));
+        });
+    }
 
     if (!baseOk) {
         console.error("Faltan elementos en el DOM. Revisa IDs.");
@@ -76,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const setSymbolsHelp = () => {
         if (!symbolsBox) return;
         symbolsBox.textContent =
-            "Símbolos válidos: ¬ ~  (negación),  ∧ ^  (y),  ∨ v  (o),  → -> >  (implica),  ( )  paréntesis. Variables: letras (p, q, r...).";
+            "Símbolos válidos: ¬ ~  (negación),  ∧ ^  (y),  ∨ v  (o),  → -> >  (implicación),  ( )  paréntesis. Variables: letras (p, q, r...).";
     };
 
     const renderTruthTable = (vars, hypsRaw, conclRaw, rows, method) => {
