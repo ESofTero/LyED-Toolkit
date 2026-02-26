@@ -75,8 +75,8 @@
             .replace(/\^/g, "∧")
             .replace(/\bv\b/g, "∨")
             .replace(/~/g, "¬")
-            .replace(/->/g, "→")
-            .replace(/<->/g, "↔");
+            .replace(/<->/g, "↔")
+            .replace(/->/g, "→");
     };
 
     const extractVars = (formulas) => {
