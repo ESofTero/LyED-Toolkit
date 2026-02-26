@@ -615,7 +615,7 @@ body{
 
     .hero h1,
     .hero p{
-        text-align: left;
+        text-align: center;
     }
 
     .title-line{ width: 100%; }
