@@ -581,69 +581,16 @@ body{
 /* utilidad */
 .hidden { display: none !important; }
 
+
 /* =========================
-   Responsive / Mobile (validator)
+   Responsive / Mobile (validator) *** no es robusto, solo ajustes básicos para pantallas muy pequeñas, no es un diseño móvil completo ***
 ========================= */
-@media (max-width: 720px){
 
-    /* Centrar el botón y caja de símbolos SIN cambiar tu layout del hero */
-    #symbolsBtn{
-        justify-self: center;   /* funciona porque .hero es grid */
-        align-self: center;
-        margin: 0 auto;
-    }
-
-    #symbolsBox{
-        width: 100%;
-        max-width: 520px;
-        margin: 10px auto 0;
-    }
-
-    /* Forzar scroll horizontal real dentro del contenedor de la tabla */
-    .truth{
-        max-width: 100%;
-    }
-
-    .truth-wrap{
-        width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* Clave: que la tabla pueda medir “lo que necesite” y el wrap haga scroll */
-    .truth-table{
-        width: max-content;     /* en vez de 100% */
-        min-width: 620px;       /* conserva tu intención de scroll */
-    }
-
-    /* botones */
-    .actions{
-        gap: 12px;
-    }
-
-    .actions-left,
-    .actions-right{
-        width: 100%;
-        justify-content: stretch;
-    }
-
-    .btn{
-        height: 46px;
-        padding: 0 14px;
-        flex: 1 1 140px;
-    }
-}
 
 @media (max-width: 420px){
     .card{ padding: 16px; }
 
-    .btn{
-        flex: 1 1 100%;
-    }
+    .btn{ flex: 1 1 100%; }
 
-    .truth-table{
-        min-width: 560px;
-    }
+    .truth-table{ min-width: 560px; }
 }
