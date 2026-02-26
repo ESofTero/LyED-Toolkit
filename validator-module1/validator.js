@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const setSymbolsHelp = () => {
         if (!symbolsBox) return;
         symbolsBox.textContent =
-            "Símbolos válidos: ¬ ~  (negación),  ∧ ^  (y),  ∨ v  (o),  → -> >  (implicación),  ( )  paréntesis. Variables: letras (p, q, r...).";
+            "Símbolos válidos: ¬ ~  (negación),  ∧ ^  (y),  ∨ v  (o),  → -> >  (implicación), <-> <=> ↔ (bicondicional),  ( )  paréntesis. Variables: letras (p, q, r...).";
     };
 
     const renderTruthTable = (vars, hypsRaw, conclRaw, rows, method) => {

@@ -1,4 +1,3 @@
-
 // Por ahora solo dejaremos el click listo para cuando liguemos al validador.
 document.querySelectorAll(".module-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
