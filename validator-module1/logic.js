@@ -12,28 +12,43 @@
 (() => {
     "use strict";
 
+    // Normaliza a estos tokens internos:
+    // ~  ^  v  ->  <->  (  )
     const normalizeFormula = (input) => {
         let s = String(input ?? "").trim();
         s = s.replace(/\s+/g, " ");
 
-        // símbolos comunes
+        // Negación
         s = s.replace(/¬/g, "~");
+
+        // Conjunción
         s = s.replace(/∧/g, "^");
 
-        // OR: soporta ∨, v/V y también | (mucha gente lo teclea como "o")
-        // OJO: esto impide usar la variable "v" (se interpreta como OR).
+        // Disyunción (soporta ∨, v/V y también |)
+        // OJO: esto significa que "v" NO puede ser variable.
         s = s.replace(/∨/g, "v");
         s = s.replace(/\|/g, "v");
-        s = s.replace(/V/g, "v");
+        s = s.replace(/\bV\b/g, "v");
+        s = s.replace(/V/g, "v"); // por si la escriben pegada
 
-        // Implicación: →, -> y también >
-        s = s.replace(/→/g, "->");
-        s = s.replace(/>/g, "->");
-
-        // Bicondicional: ↔, ⇔, <->, <=> (normalizamos_todo a <->)
+        // ---------
+        // ✅ Protege bicondicional antes de tocar '>'
+        // ---------
+        // Primero normalizamos todas las formas de bicondicional a <->,
+        // luego las "congelamos" con un placeholder para que el '>' no las rompa.
         s = s.replace(/↔/g, "<->");
         s = s.replace(/⇔/g, "<->");
         s = s.replace(/<=>/g, "<->");
+        // congela cualquier <-> existente (incluida la que acabamos de crear)
+        s = s.replace(/<->/g, "__BIC__");
+
+        // Implicación: →, -> y también >
+        s = s.replace(/→/g, "->");
+        // convertimos '>' a '->' (pero ya protegimos la bicondicional)
+        s = s.replace(/>/g, "->");
+
+        // restaura bicondicional
+        s = s.replace(/__BIC__/g, "<->");
 
         return s;
     };
@@ -56,7 +71,7 @@
             for (let i = 0; i < s.length; i++) {
                 const c = s[i];
                 if (/[A-Za-z]/.test(c)) {
-                    // "v" lo tratamos como OR, no como variable
+                    // "v" es operador OR, no variable
                     if (c === "v" || c === "V") continue;
                     set.add(c);
                 }
@@ -132,7 +147,6 @@
     };
 
     const isRightAssociative = (op) => {
-        // negación y condicional suelen ser derecha-asociativos
         return op === "~" || op === "->";
     };
 
@@ -260,9 +274,7 @@
         return list;
     };
 
-    /**
-     * method: "critical" | "taut"
-     */
+    // method: "critical" | "taut"
     const solve = (hypsRaw, conclRaw, method) => {
         const all = [...hypsRaw, conclRaw];
         const vars = extractVars(all);
@@ -305,16 +317,15 @@
             isTaut,
             header: {
                 hyps: hypsRaw.map(prettyFormula),
-                concl: prettyFormula(conclRaw)
-            }
+                concl: prettyFormula(conclRaw),
+            },
         };
     };
 
-    // Export global (para validator.js)
     window.LyEDLogic = {
         normalizeFormula,
         prettyFormula,
         extractVars,
-        solve
+        solve,
     };
 })();
