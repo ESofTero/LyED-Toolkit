@@ -586,9 +586,6 @@ body{
    Responsive / Mobile (validator) *** no es robusto, solo ajustes básicos para pantallas muy pequeñas, no es un diseño móvil completo ***
 ========================= */
 
-/* =========================
-   Responsive / Mobile (validator)
-========================= */
 @media (max-width: 720px){
 
     /* botones (dejas lo tuyo igual si quieres) */
