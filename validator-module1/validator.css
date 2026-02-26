@@ -586,6 +586,26 @@ body{
    Responsive / Mobile (validator) *** no es robusto, solo ajustes básicos para pantallas muy pequeñas, no es un diseño móvil completo ***
 ========================= */
 
+/* =========================
+   Responsive / Mobile (validator)
+========================= */
+@media (max-width: 720px){
+
+    /* botones (dejas lo tuyo igual si quieres) */
+    .actions{ gap: 12px; }
+    .actions-left,
+    .actions-right{
+        width: 100%;
+        justify-content: stretch;
+    }
+    .btn{
+        height: 46px;
+        padding: 0 14px;
+        flex: 1 1 140px;
+    }
+
+}
+
 
 @media (max-width: 420px){
     .card{ padding: 16px; }
