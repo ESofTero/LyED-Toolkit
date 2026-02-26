@@ -15,31 +15,21 @@
     "use strict";
 
     // Normaliza a estos tokens internos:
-    // ~  ^  v  ->  <->  (  )
     const normalizeFormula = (input) => {
         let s = String(input ?? "").trim();
 
-        // unifica espacios
+
         s = s.replace(/\s+/g, " ");
-
-        // normaliza guiones raros a '-'
         s = s.replace(/[–—−]/g, "-");
-
-        // Negación
         s = s.replace(/¬/g, "~");
-
-        // Conjunción
         s = s.replace(/∧/g, "^");
-
-        // Disyunción (soporta ∨, v/V y también |)
-        // OJO: esto significa que "v" NO puede ser variable.
         s = s.replace(/∨/g, "v");
         s = s.replace(/\|/g, "v");
         s = s.replace(/\bV\b/g, "v");
         s = s.replace(/V/g, "v");
 
         // ---------
-        // ✅ Bicondicional: normaliza y congela
+        // Bicondicional
         // ---------
         s = s.replace(/↔/g, "<->");
         s = s.replace(/⇔/g, "<->");
@@ -47,25 +37,13 @@
         s = s.replace(/<->/g, "__BIC__");
 
         // ---------
-        // ✅ Implicación: normaliza sin romper "->"
+        // Implicación
         // ---------
-        // 1) convierte flecha unicode a -> (pero congélala)
         s = s.replace(/→/g, "__IMP__");
-
-        // 2) acepta " - > " con espacios
         s = s.replace(/-\s*>/g, "__IMP__");
-
-        // 3) congela cualquier "->" ya escrito
         s = s.replace(/->/g, "__IMP__");
-
-        // 4) ahora sí: cualquier '>' suelto se vuelve implicación
-        //    (ya no puede romper nada porque "->" está congelado)
         s = s.replace(/>/g, "__IMP__");
-
-        // 5) restaura implicación
         s = s.replace(/__IMP__/g, "->");
-
-        // restaura bicondicional
         s = s.replace(/__BIC__/g, "<->");
 
         return s;
