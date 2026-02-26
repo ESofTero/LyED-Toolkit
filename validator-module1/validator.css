@@ -588,3 +588,127 @@ body{
 
 /* utilidad */
 .hidden { display: none !important; }
+
+/* =========================
+   Responsive / Mobile (validator)
+   Pegar al final del archivo
+========================= */
+@media (max-width: 720px){
+
+    /* más aire arriba y menos padding lateral */
+    .page{
+        padding: 28px 12px 46px;
+    }
+
+    .card{
+        border-radius: 22px;
+        padding: 18px;
+    }
+
+    /* hero más “mobile friendly” */
+    .hero{
+        text-align: left;
+        justify-items: start;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .hero h1,
+    .hero p{
+        text-align: left;
+    }
+
+    .title-line{ width: 100%; }
+    .mini-line{ margin-top: 2px; }
+
+    /* inputs/filas */
+    .hyp-row{
+        grid-template-columns: 36px 1fr 36px;
+        gap: 10px;
+    }
+
+    .hyp-row.no-remove{
+        grid-template-columns: 36px 1fr;
+    }
+
+    .hyp-label{
+        padding-right: 2px;
+        font-size: 13px;
+    }
+
+    .hyp-input,
+    .concl-input{
+        height: 48px;
+        font-size: 15px;
+    }
+
+    .hyp-remove{
+        height: 48px;
+        font-size: 22px;
+    }
+
+    .add-hyp{
+        height: 52px;
+        font-size: 14px;
+    }
+
+    /* botones: que no se “aplasten” feo */
+    .actions{
+        gap: 12px;
+    }
+
+    .actions-left,
+    .actions-right{
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .btn{
+        height: 46px;
+        padding: 0 14px;
+        flex: 1 1 140px; /* se acomodan y pueden bajar */
+    }
+
+    /* banner: apila mejor */
+    .banner{
+        grid-template-columns: 40px 1fr 28px;
+        padding: 14px;
+        border-radius: 16px;
+    }
+
+    .banner-icon{
+        width: 40px;
+        height: 40px;
+    }
+
+    .banner-title{
+        font-size: 16px;
+    }
+
+    /* truth: permite scroll horizontal sin “romper”_todo */
+    .truth-wrap{
+        max-height: 360px;
+    }
+
+    .truth-table{
+        min-width: 620px; /* menos ancho mínimo en mobile */
+    }
+
+    .truth-table thead th,
+    .truth-table tbody td{
+        padding: 12px 10px;
+    }
+}
+
+@media (max-width: 420px){
+    /* ultra móvil */
+    .card{ padding: 16px; }
+
+    .btn{
+        flex: 1 1 100%;
+    }
+
+    .truth-table{
+        min-width: 560px;
+    }
+}
