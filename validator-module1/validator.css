@@ -356,14 +356,6 @@ body{
     color: rgba(35,4,67,.70);
 }
 
-/* Responsive */
-@media (max-width: 720px){
-    .topbar{ padding: 0 16px; }
-    .hero{ text-align: left; }
-    .hyp-row{ grid-template-columns: 40px 1fr 40px; }
-    .card{ padding: 22px; }
-}
-
 /* =========================
    Caja símbolos válidos
 ========================= */
@@ -620,6 +612,7 @@ body{
 
     .title-line{ width: 100%; }
     .mini-line{ margin: 2px auto 0;}
+    .symbols{ margin: 0 auto;}
 
     /* inputs/filas */
     .hyp-row{
