@@ -91,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const renderTruthTable = (vars, hypsRaw, conclRaw, rows, method) => {
+
         if (!truthSection || !truthWrap || !truthMeta || !truthChip) return;
 
         truthSection.classList.remove("hidden");
@@ -112,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         for (let i = 0; i < headerHyps.length; i++) {
-            html += `<th>${headerHyps[i]}<div class="truth-small">(h${i + 1})</div></th>`;
+            html += `<th>${headerHyps[i]}<div class="truth-small">(H${i + 1})</div></th>`;
         }
 
         // conclusión con “subíndice” tipo las hipótesis
