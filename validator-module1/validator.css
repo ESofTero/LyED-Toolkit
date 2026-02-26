@@ -588,7 +588,6 @@ body{
 
 @media (max-width: 720px){
 
-    /* botones (dejas lo tuyo igual si quieres) */
     .actions{ gap: 12px; }
     .actions-left,
     .actions-right{
