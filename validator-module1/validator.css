@@ -612,7 +612,7 @@ body{
 
     .title-line{ width: 100%; }
     .mini-line{ margin: 2px auto 0;}
-    .symbols{ margin: 0 auto;}
+    .symbols{ align-items: center}
 
     /* inputs/filas */
     .hyp-row{
