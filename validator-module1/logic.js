@@ -5,6 +5,7 @@
    - Conjunción: ^  ∧  &
    - Disyunción: v  ∨  |
    - Implicación: ->  >  →
+   - Bicondicional: <->  <=>  ↔  ⇔
    - Paréntesis: ( )
    - Variables: letras (p, q, r, A, B...)
 */
