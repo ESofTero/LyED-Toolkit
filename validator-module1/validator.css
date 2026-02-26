@@ -583,69 +583,42 @@ body{
 
 /* =========================
    Responsive / Mobile (validator)
-   Pegar al final del archivo
 ========================= */
 @media (max-width: 720px){
 
-    /* más aire arriba y menos padding lateral */
-    .page{
-        padding: 28px 12px 46px;
+    /* Centrar el botón y caja de símbolos SIN cambiar tu layout del hero */
+    #symbolsBtn{
+        justify-self: center;   /* funciona porque .hero es grid */
+        align-self: center;
+        margin: 0 auto;
     }
 
-    .card{
-        border-radius: 22px;
-        padding: 18px;
+    #symbolsBox{
+        width: 100%;
+        max-width: 520px;
+        margin: 10px auto 0;
     }
 
-    /* hero más “mobile friendly” */
-    .hero{
-        text-align: left;
-        justify-items: start;
-        gap: 10px;
-        margin-bottom: 16px;
+    /* Forzar scroll horizontal real dentro del contenedor de la tabla */
+    .truth{
+        max-width: 100%;
     }
 
-    .hero h1,
-    .hero p{
-        text-align: center;
+    .truth-wrap{
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .title-line{ width: 100%; }
-    .mini-line{ margin: 2px auto 0;}
-    .symbols{ align-items: center; }
-
-    /* inputs/filas */
-    .hyp-row{
-        grid-template-columns: 36px 1fr 36px;
-        gap: 10px;
+    /* Clave: que la tabla pueda medir “lo que necesite” y el wrap haga scroll */
+    .truth-table{
+        width: max-content;     /* en vez de 100% */
+        min-width: 620px;       /* conserva tu intención de scroll */
     }
 
-    .hyp-row.no-remove{
-        grid-template-columns: 36px 1fr;
-    }
-
-    .hyp-label{
-        padding-right: 2px;
-        font-size: 13px;
-    }
-
-    .hyp-input,
-    .concl-input{
-        height: 48px;
-        font-size: 15px;
-    }
-
-    .hyp-remove{
-        height: 48px;
-        font-size: 22px;
-    }
-
-    .add-hyp{
-        height: 52px;
-        font-size: 14px;
-    }
-
-    /* botones: que no se “aplasten” feo */
+    /* botones */
     .actions{
         gap: 12px;
     }
@@ -659,42 +632,11 @@ body{
     .btn{
         height: 46px;
         padding: 0 14px;
-        flex: 1 1 140px; /* se acomodan y pueden bajar */
-    }
-
-    /* banner: apila mejor */
-    .banner{
-        grid-template-columns: 40px 1fr 28px;
-        padding: 14px;
-        border-radius: 16px;
-    }
-
-    .banner-icon{
-        width: 40px;
-        height: 40px;
-    }
-
-    .banner-title{
-        font-size: 16px;
-    }
-
-    /* truth: permite scroll horizontal sin “romper”_todo */
-    .truth-wrap{
-        max-height: 360px;
-    }
-
-    .truth-table{
-        min-width: 620px; /* menos ancho mínimo en mobile */
-    }
-
-    .truth-table thead th,
-    .truth-table tbody td{
-        padding: 12px 10px;
+        flex: 1 1 140px;
     }
 }
 
 @media (max-width: 420px){
-    /* ultra móvil */
     .card{ padding: 16px; }
 
     .btn{
