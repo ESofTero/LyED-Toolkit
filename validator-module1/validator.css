@@ -619,7 +619,7 @@ body{
     }
 
     .title-line{ width: 100%; }
-    .mini-line{ margin-top: 2px; align-items: center; }
+    .mini-line{ margin: 2px auto 0;}
 
     /* inputs/filas */
     .hyp-row{
