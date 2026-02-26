@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const headerConcl = window.LyEDLogic.prettyFormula(conclRaw);
 
         // encabezado de tautología simplificado
-        const tautHeader = `(h1 ∧ … ∧ hn) → ∴Q`;
+        const tautHeader = `(H1 ∧ … ∧ Hn) → ∴Q`;
 
         let html = `<table class="truth-table"><thead><tr>`;
 
