@@ -1,10 +1,9 @@
+/* LyED ToolKit (Home) - Estilos de la página principal */
 :root{
     --purple-1: #815c97;
     --white: #ffffff;
     --purple-900: #230443;
 
-    --lavender: #d5c6dc;
-    /* Más claro para contraste (como pediste) */
     --lavender-2: #eadff0;
 
     --card-border: rgba(255,255,255,.35);
@@ -31,7 +30,7 @@ body{
 }
 
 .shell{
-    width: min(620px, 100%); /* ✅ más compacto */
+    width: min(620px, 100%);
 }
 
 /* Tarjeta principal */
@@ -100,7 +99,7 @@ h1{
     gap: 14px;
 }
 
-/* Botones centrados, sin numeración */
+/* Botones */
 .module-btn{
     width: 100%;
     border-radius: var(--radius-btn);
@@ -128,7 +127,7 @@ h1{
 }
 
 .module-btn:hover{
-    background: var(--purple-1);           /* ✅ hover morado */
+    background: var(--purple-1);
     color: var(--white);
     border-color: rgba(255,255,255,.22);
 }
@@ -140,7 +139,7 @@ h1{
     font-size: 10px;
 }
 
-/* Mobile tweaks */
+/* Mobile */
 @media (max-width: 520px){
     .module-btn{
         padding: 16px 14px;

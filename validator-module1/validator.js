@@ -1,3 +1,13 @@
+/**
+ * LyED ToolKit (Validator UI)
+ * Controla únicamente interfaz:
+ * - Agregar/quitar hipótesis (1 a 10)
+ * - Leer inputs y mandar a LYED_LOGIC para generar tabla / validar
+ * - Renderizar banner + tabla de verdad
+ *
+ * Nota: Este archivo NO implementa lógica proposicional; eso vive en logic.js.
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
     if (window.__LYED_VALIDATOR_INIT__) return;
     window.__LYED_VALIDATOR_INIT__ = true;
@@ -9,186 +19,55 @@ document.addEventListener("DOMContentLoaded", () => {
     const addBtn = document.getElementById("addHypBtn");
     const countText = document.getElementById("countText");
     const conclusionInput = document.getElementById("conclusionInput");
-
+    const resultBox = document.getElementById("resultBox");
     const clearBtn = document.getElementById("clearBtn");
     const criticalBtn = document.getElementById("criticalBtn");
     const tautBtn = document.getElementById("tautBtn");
+
     const exampleBtn = document.getElementById("exampleBtn");
+    const symbolsBtn = document.getElementById("symbolsBtn");
+    const symbolsBox = document.getElementById("symbolsBox");
 
-    const banner = document.getElementById("banner");
-    const bannerTitle = document.getElementById("bannerTitle");
-    const bannerSub = document.getElementById("bannerSub");
-    const bannerIcon = document.getElementById("bannerIcon");
-    const bannerClose = document.getElementById("bannerClose");
-
-    const truthSection = document.getElementById("truthSection");
-    const truthWrap = document.getElementById("truthWrap");
-    const truthMeta = document.getElementById("truthMeta");
-    const truthChip = document.getElementById("truthChip");
-
-    const helpToggle = document.getElementById("helpToggle");
-    const symbolsBox = document.getElementById("symbolsBox"); // opcional
-
-    const baseOk =
-        hypothesesEl && addBtn && countText && conclusionInput && clearBtn && criticalBtn && tautBtn;
-
-
-    if (helpToggle && symbolsBox) {
-        helpToggle.addEventListener("click", () => {
-            const isHidden = symbolsBox.classList.contains("hidden");
-
-            symbolsBox.classList.toggle("hidden");
-            helpToggle.setAttribute("aria-expanded", String(isHidden));
-        });
-    }
-
-    if (!baseOk) {
-        console.error("Faltan elementos en el DOM. Revisa IDs.");
+    if (
+        !hypothesesEl || !addBtn || !countText || !conclusionInput ||
+        !resultBox || !clearBtn || !criticalBtn || !tautBtn
+    ) {
+        console.error("Falta un elemento del DOM (IDs).");
         return;
     }
 
-    if (!window.LyEDLogic) {
-        console.error("No se cargó logic.js (LyEDLogic no existe). Revisa el orden de scripts.");
-        return;
-    }
-
-    const boolVF = (x) => (x ? "V" : "F");
-
-    const clearOutputs = () => {
-        if (banner) banner.classList.add("hidden");
-        if (truthSection) truthSection.classList.add("hidden");
-        if (truthWrap) truthWrap.innerHTML = "";
-        if (truthMeta) truthMeta.textContent = "· 0 renglones";
-        if (truthChip) truthChip.textContent = "—";
+    const getHypothesisValues = () => {
+        return Array.from(hypothesesEl.querySelectorAll(".hyp-input"))
+            .map((i) => i.value.trim())
+            .filter((v) => v.length > 0);
     };
 
-    const showBanner = (type, title, sub, iconText) => {
-        if (!banner || !bannerTitle || !bannerSub || !bannerIcon) return;
-
-        banner.classList.remove("hidden", "ok", "bad", "vac");
-        if (type) banner.classList.add(type);
-
-        bannerTitle.textContent = title;
-        bannerSub.textContent = sub;
-        bannerIcon.textContent = iconText || "!";
-    };
-
-    const getHypothesisStrings = () => {
-        const rows = hypothesesEl.querySelectorAll(".hyp-row");
-        const list = [];
-        for (let i = 0; i < rows.length; i++) {
-            const input = rows[i].querySelector(".hyp-input");
-            const val = input ? String(input.value || "").trim() : "";
-            if (val) list.push(val);
-        }
-        return list;
-    };
-
-    const setSymbolsHelp = () => {
-        if (!symbolsBox) return;
-        symbolsBox.textContent =
-            "Símbolos válidos: ¬ ~  (negación),  ∧ ^  (y),  ∨ v  (o),  → -> >  (implicación), <-> <=> ↔ (bicondicional),  ( )  paréntesis. Variables: letras (p, q, r...).";
-    };
-
-    const renderTruthTable = (vars, hypsRaw, conclRaw, rows, method) => {
-
-        if (!truthSection || !truthWrap || !truthMeta || !truthChip) return;
-
-        truthSection.classList.remove("hidden");
-        truthMeta.textContent = `· ${rows.length} renglones`;
-
-        truthChip.textContent =
-            method === "critical" ? "Renglón(es) crítico(s) marcado(s)" : "Implicación (premisas → conclusión)";
-
-        const headerHyps = hypsRaw.map((h) => window.LyEDLogic.prettyFormula(h));
-        const headerConcl = window.LyEDLogic.prettyFormula(conclRaw);
-
-        // encabezado de tautología simplificado
-        const tautHeader = `(H1 ∧ … ∧ Hn) → ∴Q`;
-
-        let html = `<table class="truth-table"><thead><tr>`;
-
-        for (let i = 0; i < vars.length; i++) {
-            html += `<th><span class="truth-sym">${vars[i]}</span></th>`;
-        }
-
-        for (let i = 0; i < headerHyps.length; i++) {
-            html += `<th>${headerHyps[i]}<div class="truth-small">(H${i + 1})</div></th>`;
-        }
-
-        // conclusión con “subíndice” tipo las hipótesis
-        html += `<th>∴ ${headerConcl}<div class="truth-small">(Q)</div></th>`;
-
-        if (method === "taut") {
-            html += `<th>${tautHeader}</th>`;
-        }
-
-        html += `</tr></thead><tbody>`;
-
-        for (let r = 0; r < rows.length; r++) {
-            const row = rows[r];
-            const classes = [];
-            if (row.critical) classes.push("critical");
-            if (row.badCritical) classes.push("bad");
-
-            html += `<tr class="${classes.join(" ")}">`;
-
-            for (let i = 0; i < vars.length; i++) {
-                html += `<td>${boolVF(row.env[vars[i]])}</td>`;
-            }
-
-            for (let i = 0; i < row.premVals.length; i++) {
-                html += `<td>${boolVF(row.premVals[i])}</td>`;
-            }
-
-            html += `<td>${boolVF(row.conclVal)}</td>`;
-
-            if (method === "taut") {
-                html += `<td>${boolVF(row.implVal)}</td>`;
-            }
-
-            html += `</tr>`;
-        }
-
-        html += `</tbody></table>`;
-        truthWrap.innerHTML = html;
+    const clearResult = () => {
+        resultBox.innerHTML = "";
     };
 
     const updateLabels = () => {
         const rows = hypothesesEl.querySelectorAll(".hyp-row");
 
-        for (let i = 0; i < rows.length; i++) {
-            const label = rows[i].querySelector(".hyp-label");
+        rows.forEach((row, i) => {
+            const label = row.querySelector(".hyp-label");
             if (label) label.textContent = `H${i + 1}`;
-
-            const input = rows[i].querySelector(".hyp-input");
-            if (input) input.setAttribute("aria-label", `Hipótesis ${i + 1}`);
-
-            const remove = rows[i].querySelector(".hyp-remove");
-            if (remove) remove.setAttribute("aria-label", `Quitar hipótesis ${i + 1}`);
-        }
+        });
 
         countText.textContent = `(${rows.length}/${MAX})`;
+        addBtn.classList.toggle("hidden", rows.length >= MAX);
 
-        if (rows.length >= MAX) addBtn.classList.add("hidden");
-        else addBtn.classList.remove("hidden");
+        // Cuando solo hay 1 hipótesis: ocultamos botón "-" y expandimos el grid
+        rows.forEach((row) => {
+            const removeBtn = row.querySelector(".hyp-remove");
+            const onlyOne = rows.length <= MIN;
 
-        if (rows.length <= MIN) {
-            for (let i = 0; i < rows.length; i++) {
-                rows[i].classList.add("no-remove");
-                const removeBtn = rows[i].querySelector(".hyp-remove");
-                if (removeBtn) removeBtn.classList.add("hidden");
-            }
-        } else {
-            for (let i = 0; i < rows.length; i++) {
-                rows[i].classList.remove("no-remove");
-                const removeBtn = rows[i].querySelector(".hyp-remove");
-                if (removeBtn) removeBtn.classList.remove("hidden");
-            }
-        }
+            row.classList.toggle("no-remove", onlyOne);
+            if (removeBtn) removeBtn.classList.toggle("hidden", onlyOne);
+        });
     };
 
-    const makeRow = (value) => {
+    const makeRow = (value = "") => {
         const row = document.createElement("div");
         row.className = "hyp-row";
 
@@ -200,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         input.className = "hyp-input";
         input.type = "text";
         input.placeholder = "Escribe una hipótesis...";
-        input.value = value || "";
+        input.value = value;
 
         const remove = document.createElement("button");
         remove.className = "hyp-remove";
@@ -215,149 +94,236 @@ document.addEventListener("DOMContentLoaded", () => {
         return row;
     };
 
-    const compute = (method) => {
-        clearOutputs();
+    const setSymbolsHelp = () => {
+        if (!symbolsBox) return;
+        symbolsBox.textContent =
+            "Símbolos válidos: ¬ ~ (negación), ∧ ^ (y), ∨ v (o), → -> > (implica), ↔ <-> <=> (bicondicional), ( ) paréntesis. Variables: letras (p, q, r...).";
+    };
 
-        const hyps = getHypothesisStrings();
-        const concl = String(conclusionInput.value || "").trim();
+    const renderBanner = ({ kind, mode, detail }) => {
+        // kind: valid | invalid | vacuous | error
+        // mode: "Renglón Crítico" | "Tautología"
+        const titles = {
+            valid: `Argumento válido — ${mode}`,
+            invalid: `Argumento inválido — ${mode}`,
+            vacuous: `Argumento vacuo — ${mode}`,
+            error: "Fórmula inválida",
+        };
 
-        if (hyps.length < 1) {
-            showBanner("bad", "Faltan hipótesis", "Agrega al menos 1 hipótesis.", "!");
-            return;
+        const subtitles = {
+            valid: detail || "La validación fue exitosa.",
+            invalid: detail || "Hay al menos un caso que rompe la validez.",
+            vacuous: detail || "No hay filas con premisas verdaderas (vacuidad).",
+            error: detail || "Revisa la sintaxis.",
+        };
+
+        const icon = kind === "valid" ? "✓" : (kind === "invalid" ? "×" : "!");
+        const cls = kind === "valid" ? "ok" : (kind === "invalid" ? "bad" : "vac");
+
+        resultBox.innerHTML = `
+          <div class="banner ${cls}">
+            <div class="banner-icon">${icon}</div>
+            <div>
+              <div class="banner-title">${titles[kind]}</div>
+              <div class="banner-sub">${subtitles[kind]}</div>
+            </div>
+            <button class="banner-close" type="button" aria-label="Cerrar">×</button>
+          </div>
+        `;
+
+        const closeBtn = resultBox.querySelector(".banner-close");
+        if (closeBtn) closeBtn.addEventListener("click", clearResult, { once: true });
+    };
+
+    const renderTruthTable = (table, extra) => {
+        // extra: { criticalRows?: number[], showImplication?: boolean }
+        const { variables, hypothesesPretty, conclusionPretty, rows } = table;
+
+        const criticalSet = new Set(extra?.criticalRows || []);
+        const showImplication = Boolean(extra?.showImplication);
+
+        const headerCells = [
+            ...variables.map((v) => `<th>${v}</th>`),
+            ...hypothesesPretty.map((h, i) => `<th>${h}<div class="truth-small">(h${i + 1})</div></th>`),
+            `<th>∴ ${conclusionPretty}<div class="truth-small">(q)</div></th>`,
+        ];
+
+        if (showImplication) {
+            headerCells.push(`<th>(h1 ∧ ... ∧ hn) → ∴Q</th>`);
         }
-        if (!concl) {
-            showBanner("bad", "Falta la conclusión", "Escribe la conclusión para evaluar.", "!");
-            return;
-        }
+
+        const bodyRows = rows.map((row, idx) => {
+            const vals = variables.map((v) => (row.valuation[v] ? "V" : "F"));
+            const hyps = row.hypotheses.map((b) => (b ? "V" : "F"));
+            const concl = row.conclusion ? "V" : "F";
+
+            const premisesAll = row.hypotheses.every(Boolean);
+            const implication = (!premisesAll) || row.conclusion;
+
+            const isCritical = criticalSet.has(idx);
+            const trClass = isCritical ? "critical" : "";
+
+            const cells = [
+                ...vals.map((c) => `<td class="truth-sym">${c}</td>`),
+                ...hyps.map((c) => `<td class="truth-sym">${c}</td>`),
+                `<td class="truth-sym">${concl}</td>`,
+            ];
+
+            if (showImplication) {
+                cells.push(`<td class="truth-sym">${implication ? "V" : "F"}</td>`);
+            }
+
+            return `<tr class="${trClass}">${cells.join("")}</tr>`;
+        });
+
+        const chipText = showImplication
+            ? "Implicación (premisas → conclusión)"
+            : "Renglón(es) crítico(s) marcado(s)";
+
+        resultBox.insertAdjacentHTML(
+            "beforeend",
+            `
+            <div class="truth">
+              <div class="truth-head">
+                <div class="truth-title">
+                  TABLA DE VERDAD <span class="truth-meta">· ${rows.length} renglones</span>
+                </div>
+                <div class="truth-chip">${chipText}</div>
+              </div>
+
+              <div class="truth-wrap">
+                <table class="truth-table">
+                  <thead><tr>${headerCells.join("")}</tr></thead>
+                  <tbody>${bodyRows.join("")}</tbody>
+                </table>
+              </div>
+            </div>
+            `
+        );
+    };
+
+    const runCritical = () => {
+        clearResult();
 
         try {
-            if (method === "critical") {
-                const res = window.LyEDLogic.solve(hyps, concl, "critical");
+            const hyps = getHypothesisValues();
+            const concl = conclusionInput.value.trim();
 
-                if (!res.hasCritical) {
-                    showBanner(
-                        "vac",
-                        "Argumento vacío",
-                        "No hay renglón crítico (las premisas nunca son verdaderas a la vez).",
-                        "!"
-                    );
-                } else if (res.isValid) {
-                    showBanner(
-                        "ok",
-                        "Argumento válido",
-                        "En todo renglón crítico, la conclusión es verdadera.",
-                        "✓"
-                    );
-                } else {
-                    showBanner(
-                        "bad",
-                        "Argumento inválido — Renglón Crítico",
-                        "Existe al menos un renglón crítico donde la conclusión es falsa.",
-                        "×"
-                    );
-                }
+            const table = window.LYED_LOGIC.buildTruthTable(hyps, concl);
+            const verdict = window.LYED_LOGIC.validateByCriticalRow(table);
 
-                renderTruthTable(res.vars, hyps, concl, res.rows, "critical");
+            if (verdict.kind === "vacuous") {
+                renderBanner({
+                    kind: "vacuous",
+                    mode: "Renglón Crítico",
+                    detail: "No hay escenarios donde todas las hipótesis sean verdaderas.",
+                });
+                renderTruthTable(table, { criticalRows: [] });
                 return;
             }
 
-            const res = window.LyEDLogic.solve(hyps, concl, "taut");
-            if (res.isTaut) {
-                showBanner(
-                    "ok",
-                    "Argumento válido — Tautología",
-                    "La implicación (premisas → conclusión) es tautología.",
-                    "✓"
-                );
-            } else {
-                showBanner(
-                    "bad",
-                    "Argumento inválido — Tautología",
-                    "La implicación falla en al menos una valuación.",
-                    "×"
-                );
-            }
+            renderBanner({
+                kind: verdict.kind === "valid" ? "valid" : "invalid",
+                mode: "Renglón Crítico",
+                detail:
+                    verdict.kind === "valid"
+                        ? "En todo renglón crítico, la conclusión es verdadera."
+                        : "Existe al menos un renglón crítico donde la conclusión es falsa.",
+            });
 
-            renderTruthTable(res.vars, hyps, concl, res.rows, "taut");
+            renderTruthTable(table, { criticalRows: verdict.criticalRows });
         } catch (err) {
-            const msg = String(err && err.message ? err.message : err);
-            showBanner("bad", "Fórmula inválida", msg, "!");
+            renderBanner({
+                kind: "error",
+                mode: "Renglón Crítico",
+                detail: err?.message || "Error desconocido",
+            });
         }
     };
 
-    addBtn.addEventListener(
-        "click",
-        () => {
-            const rows = hypothesesEl.querySelectorAll(".hyp-row");
-            if (rows.length >= MAX) return;
+    const runTautology = () => {
+        clearResult();
 
-            hypothesesEl.appendChild(makeRow(""));
-            updateLabels();
-            clearOutputs();
-        },
-        false
-    );
+        try {
+            const hyps = getHypothesisValues();
+            const concl = conclusionInput.value.trim();
 
-    hypothesesEl.addEventListener(
-        "click",
-        (e) => {
-            const btn = e.target.closest(".hyp-remove");
-            if (!btn) return;
+            const table = window.LYED_LOGIC.buildTruthTable(hyps, concl);
+            const verdict = window.LYED_LOGIC.validateByTautology(table);
 
-            const rows = hypothesesEl.querySelectorAll(".hyp-row");
-            if (rows.length <= MIN) return;
+            renderBanner({
+                kind: verdict.kind === "valid" ? "valid" : "invalid",
+                mode: "Tautología",
+                detail:
+                    verdict.kind === "valid"
+                        ? "La implicación (premisas → conclusión) es tautología."
+                        : "La implicación (premisas → conclusión) NO es tautología.",
+            });
 
-            const row = btn.closest(".hyp-row");
-            if (row) row.remove();
+            renderTruthTable(table, { showImplication: true });
+        } catch (err) {
+            renderBanner({
+                kind: "error",
+                mode: "Tautología",
+                detail: err?.message || "Error desconocido",
+            });
+        }
+    };
 
-            updateLabels();
-            clearOutputs();
-        },
-        false
-    );
+    // Eventos UI principales
+    addBtn.addEventListener("click", () => {
+        const rows = hypothesesEl.querySelectorAll(".hyp-row");
+        if (rows.length >= MAX) return;
 
-    if (exampleBtn) {
-        exampleBtn.addEventListener("click", function () {
+        hypothesesEl.appendChild(makeRow(""));
+        updateLabels();
+        clearResult();
+    });
 
-            // Limpiar hipótesis y conclusión
-            hypothesesEl.innerHTML = "";
+    hypothesesEl.addEventListener("click", (e) => {
+        const btn = e.target.closest(".hyp-remove");
+        if (!btn) return;
 
-            // Agrega exactamente 2 hipótesis
-            hypothesesEl.appendChild(makeRow("p → q"));
-            hypothesesEl.appendChild(makeRow("p"));
+        const rows = hypothesesEl.querySelectorAll(".hyp-row");
+        if (rows.length <= MIN) return;
 
-            // Conclusión
-            conclusionInput.value = "q";
+        const row = btn.closest(".hyp-row");
+        if (row) row.remove();
 
-            updateLabels();
-            clearOutputs();
-
-            // Ejecuta automáticamente Tautología
-            if (typeof compute === "function") {
-                compute("taut");
-            } else {
-                tautBtn.click();
-            }
-
-        });
-    }
+        updateLabels();
+        clearResult();
+    });
 
     clearBtn.addEventListener("click", () => {
         hypothesesEl.innerHTML = "";
         hypothesesEl.appendChild(makeRow(""));
         hypothesesEl.appendChild(makeRow(""));
         conclusionInput.value = "";
-        clearOutputs();
         updateLabels();
+        clearResult();
     });
 
-    if (bannerClose && banner) {
-        bannerClose.addEventListener("click", () => banner.classList.add("hidden"));
+    criticalBtn.addEventListener("click", runCritical);
+    tautBtn.addEventListener("click", runTautology);
+
+    // Ayuda de símbolos + ejemplo (si existen en el HTML)
+    if (symbolsBtn && symbolsBox) {
+        setSymbolsHelp();
+        symbolsBtn.addEventListener("click", () => {
+            symbolsBox.classList.toggle("hidden");
+        });
     }
 
-    criticalBtn.addEventListener("click", () => compute("critical"));
-    tautBtn.addEventListener("click", () => compute("taut"));
+    if (exampleBtn) {
+        exampleBtn.addEventListener("click", () => {
+            // Ejemplo simple (ajústalo si quieres otro)
+            const inputs = hypothesesEl.querySelectorAll(".hyp-input");
+            if (inputs[0]) inputs[0].value = "p → q";
+            if (inputs[1]) inputs[1].value = "p";
+            conclusionInput.value = "q";
+            clearResult();
+        });
+    }
 
-    setSymbolsHelp();
     updateLabels();
 });

@@ -1,10 +1,9 @@
 {
   "name": "lyed-toolkit",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "private": true,
+  "description": "LyED ToolKit - Validador de argumentos (renglón crítico / tautología)",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "private": true
+    "start": "npx http-server . -p 5173"
+  }
 }

@@ -1,3 +1,4 @@
+/* LyED ToolKit (Módulo 1) - Estilos del validador */
 * { box-sizing: border-box; }
 
 html, body {
@@ -7,8 +8,8 @@ html, body {
 body{
     margin: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue";
-    min-height: 100vh;     /* ✅ fallback estable */
-    min-height: 100dvh;    /* ✅ moderno estable en Chromium */
+    min-height: 100vh;
+    min-height: 100dvh;
     /* quita 100svh */
     color: #ffffff;
     background: linear-gradient(270deg, #815c97, #230443);
@@ -190,7 +191,7 @@ body{
 .section-count{
     font-weight: 700;
     letter-spacing: 0;
-    color: rgba(171,144,185,.95); /* #ab90b9 */
+    color: rgba(171,144,185,.95);
 }
 
 /* Hypotheses rows */
@@ -459,7 +460,7 @@ body{
 .banner.bad::before{ background: rgba(255,255,255,.32); }
 
 .banner.vac{
-    /* vacuo ahora sí se nota */
+    /* vacío ahora sí se nota */
     background: rgba(171,144,185,.60);
     color: rgba(35,4,67,.92);
     border-color: rgba(35,4,67,.14);
@@ -560,7 +561,6 @@ body{
     background: rgba(234,223,240,.25);
 }
 
-/* ✅ renglón crítico: ahora sí se ve “marcado” */
 .truth-table tbody tr.critical{
     background: rgba(171,144,185,.30);
     box-shadow:
@@ -568,7 +568,6 @@ body{
             inset 0 0 0 1px rgba(129,92,151,.20);
 }
 
-/* ✅ crítico “malo”: más fuerte todavía */
 .truth-table tbody tr.critical.bad{
     background: rgba(35,4,67,.16);
     box-shadow:
