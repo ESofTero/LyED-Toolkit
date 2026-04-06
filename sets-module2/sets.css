@@ -302,10 +302,6 @@
 
 
 /* RESULT */
-.result-card {
-    background: linear-gradient(180deg, #f7eefc 0%, #f6effa 100%);
-}
-
 .result-count {
     background: #efe3f8;
     color: #8154a3;
