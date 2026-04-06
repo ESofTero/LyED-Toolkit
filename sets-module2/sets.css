@@ -199,7 +199,6 @@
 /* SWITCH */
 .mode-switch {
     display: flex;
-    /*background: #e8def1;*/
     background: rgba(129, 92, 151, 0.20);
     border-radius: 18px;
     padding: 5px;
