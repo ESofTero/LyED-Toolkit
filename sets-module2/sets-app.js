@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const uploadBtn = document.getElementById("uploadBtn");
     const fileInput = document.getElementById("fileInput");
     const clearAllBtn = document.getElementById("clearAllBtn");
-    const validateBtn = document.getElementById("validateBtn");
+    const exampleBtn = document.getElementById("exampleBtn");
     const calculateBtn = document.getElementById("calculateBtn");
 
     const setsList = document.getElementById("setsList");
@@ -37,14 +37,27 @@ document.addEventListener("DOMContentLoaded", () => {
         "Diferencia simetrica": "△"
     };
 
-    const INITIAL_SETS_HTML = setsList ? setsList.innerHTML : "";
+    const EXAMPLE_SETS = [
+        {
+            fileName: "conjunto_A.txt",
+            elements: ["a", "b", "c", "{a,c}", "1", "2", "3"]
+        },
+        {
+            fileName: "conjunto_B.txt",
+            elements: ["b", "c", "d", "3", "4", "x"]
+        },
+        {
+            fileName: "conjunto_C.txt",
+            elements: ["{a,c}", "d", "5", "6"]
+        }
+    ];
 
     let loadedSets = [];
     let universeSet = new Set();
     let currentMode = "guided";
 
     if (
-        !uploadBtn || !fileInput || !clearAllBtn || !validateBtn || !calculateBtn ||
+        !uploadBtn || !fileInput || !clearAllBtn || !exampleBtn || !calculateBtn ||
         !setsList || !guidedModeBtn || !freeModeBtn || !guidedPanel || !freePanel ||
         !symbolButtons || !expressionInput || !operationPanel || !operationType ||
         !setOne || !setTwo || !resultCard || !resultCount || !resultBox ||
@@ -72,6 +85,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function updateUploadButtonText() {
+        uploadBtn.innerHTML = loadedSets.length
+            ? `<span>⎘</span> Agregar archivo`
+            : `<span>⎘</span> Cargar archivos`;
+    }
+
     function getNextSetName(index) {
         if (index < AVAILABLE_SET_NAMES.length) {
             return AVAILABLE_SET_NAMES[index];
@@ -92,10 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
         universeSet = new Set(allElements);
     }
 
-    function formatSetPreview(elements, limit = 10) {
-        const previewItems = elements.slice(0, limit);
-        return previewItems.length
-            ? `{ ${previewItems.join(", ")}${elements.length > limit ? ", ..." : ""} }`
+    function formatSetPreview(elements) {
+        return elements.length
+            ? `{ ${elements.join(", ")} }`
             : "{ }";
     }
 
@@ -125,7 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
             `;
-
             return article;
         }
 
@@ -192,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         });
 
-        if (loadedSets.length) {
+        if (loadedSets.length > 0) {
             setsList.appendChild(
                 createSetCard(
                     "U",
@@ -208,6 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         updateSelectOptions();
+        updateUploadButtonText();
     }
 
     async function handleFiles(fileList) {
@@ -215,14 +233,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!files.length) return;
 
-        loadedSets = await Promise.all(
+        const usedLabels = new Set(loadedSets.map((setData) => setData.label));
+        const availableLabels = AVAILABLE_SET_NAMES.filter((label) => !usedLabels.has(label));
+
+        const newSets = await Promise.all(
             files.map(async (file, index) => {
                 const content = await file.text();
                 const elements = parseFileContent(content);
 
                 return {
                     id: crypto.randomUUID(),
-                    label: getNextSetName(index),
+                    label: availableLabels[index] || `S${loadedSets.length + index + 1}`,
                     fileName: file.name,
                     rawContent: content,
                     elements
@@ -230,6 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
         );
 
+        loadedSets = [...loadedSets, ...newSets];
         computeUniverse();
         renderSets();
 
@@ -237,16 +259,33 @@ document.addEventListener("DOMContentLoaded", () => {
         hideResultCard();
     }
 
+    function loadExample() {
+        loadedSets = EXAMPLE_SETS.map((setData, index) => ({
+            id: crypto.randomUUID(),
+            label: getNextSetName(index),
+            fileName: setData.fileName,
+            rawContent: setData.elements.join("\n"),
+            elements: [...setData.elements]
+        }));
+
+        computeUniverse();
+        renderSets();
+
+        expressionInput.value = "";
+        hideResultCard();
+    }
+
     function clearAll() {
         loadedSets = [];
         universeSet = new Set();
 
-        setsList.innerHTML = INITIAL_SETS_HTML;
+        setsList.innerHTML = "";
         setOne.innerHTML = "";
         setTwo.innerHTML = "";
         expressionInput.value = "";
         fileInput.value = "";
 
+        updateUploadButtonText();
         hideResultCard();
     }
 
@@ -300,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function runGuidedCalculation() {
         if (!loadedSets.length) {
-            showResultCard("Primero carga al menos un archivo.", "0 elementos", "⚠ Sin archivos");
+            showResultCard("Primero carga al menos un archivo o usa Ver ejemplo.", "0 elementos", "⚠ Sin conjuntos");
             return;
         }
 
@@ -333,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function runFreeCalculation() {
         if (!loadedSets.length) {
-            showResultCard("Primero carga al menos un archivo.", "0 elementos", "⚠ Sin archivos");
+            showResultCard("Primero carga al menos un archivo o usa Ver ejemplo.", "0 elementos", "⚠ Sin conjuntos");
             return;
         }
 
@@ -369,19 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     clearAllBtn.addEventListener("click", clearAll);
-
-    validateBtn.addEventListener("click", () => {
-        if (!loadedSets.length) {
-            showResultCard("No hay archivos cargados para validar.", "0 elementos", "⚠ Sin archivos");
-            return;
-        }
-
-        showResultCard(
-            `Se cargaron ${loadedSets.length} conjunto${loadedSets.length === 1 ? "" : "s"} y el universo fue calculado automáticamente.`,
-            `${universeSet.size} elemento${universeSet.size === 1 ? "" : "s"}`,
-            "✓ Archivos listos"
-        );
-    });
+    exampleBtn.addEventListener("click", loadExample);
 
     calculateBtn.addEventListener("click", () => {
         if (currentMode === "guided") {
@@ -406,5 +433,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     activateGuidedMode();
+    updateUploadButtonText();
     hideResultCard();
 });

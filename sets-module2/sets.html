@@ -35,61 +35,7 @@
 
         <div class="main-grid">
             <section class="left-panel">
-                <div class="sets-list mini-card" id="setsList">
-                    <div id="set-example">
-                        <article class="set-card">
-                            <div class="set-badge">A</div>
-                            <div class="set-info">
-                                <div class="set-top">
-                                    <h3>Conjunto Ejemplo</h3>
-                                    <span class="set-size">7 elementos</span>
-                                </div>
-                                <p class="file-name">conjunto_A.txt</p>
-                                <div class="set-preview">{ a, b, c, {a,c}, 1, 2, 3 }</div>
-                            </div>
-                        </article>
-
-                        <article class="set-card">
-                            <div class="set-badge">B</div>
-                            <div class="set-info">
-                                <div class="set-top">
-                                    <h3>Conjunto Ejemplo</h3>
-                                    <span class="set-size">6 elementos</span>
-                                </div>
-                                <p class="file-name">conjunto_B.txt</p>
-                                <div class="set-preview">{ b, c, d, 3, 4, x }</div>
-                            </div>
-                        </article>
-
-                        <article class="set-card">
-                            <div class="set-badge">C</div>
-                            <div class="set-info">
-                                <div class="set-top">
-                                    <h3>Conjunto Ejemplo</h3>
-                                    <span class="set-size">4 elementos</span>
-                                </div>
-                                <p class="file-name">conjunto_C.txt</p>
-                                <div class="set-preview">{ {a,c}, d, 5, 6 }</div>
-                            </div>
-                        </article>
-
-                        <article class="set-card mini-card">
-                            <div class="set-badge">U</div>
-                            <div class="set-info">
-                                <div class="set-top">
-                                    <h3>Universo U</h3>
-                                    <span class="set-size">12 elementos</span>
-                                </div>
-                                <div class="universe-upload">
-                                    <div>
-                                        <p class="file-name">calculado automáticamente</p>
-                                        <div class="set-preview">{ a, b, c, {a,c}, 1, 2, 3, d, 4, x, 5, 6 }</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
+                <div class="sets-list mini-card" id="setsList"></div>
 
                 <div class="format-box">
                     <h4>💡 Formato de archivos</h4>
@@ -98,7 +44,7 @@
 
                 <div class="left-actions">
                     <button class="btn btn-outline" id="clearAllBtn" type="button">Limpiar todo</button>
-                    <button class="btn btn-solid" id="validateBtn" type="button">Validar archivos</button>
+                    <button class="btn btn-solid" id="exampleBtn" type="button">Ver ejemplo</button>
                 </div>
             </section>
 
@@ -141,20 +87,12 @@
 
                             <div class="field">
                                 <label for="setOne">Primer conjunto</label>
-                                <select id="setOne">
-                                    <option>A</option>
-                                    <option>B</option>
-                                    <option>C</option>
-                                </select>
+                                <select id="setOne"></select>
                             </div>
 
                             <div class="field">
                                 <label for="setTwo">Segundo conjunto</label>
-                                <select id="setTwo">
-                                    <option>B</option>
-                                    <option>A</option>
-                                    <option>C</option>
-                                </select>
+                                <select id="setTwo"></select>
                             </div>
                         </div>
                     </div>
