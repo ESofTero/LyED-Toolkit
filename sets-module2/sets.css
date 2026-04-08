@@ -61,14 +61,12 @@
 
 .set-card {
     display: grid;
-    grid-template-columns: 56px 1fr 12px;
-    gap: 12px;
+    grid-template-columns: 56px 1fr;
     align-items: start;
-    background: #ffffff;
-    border: 1px solid rgba(137, 103, 168, .14);
+    background: rgba(255,255,255,.02);
+    border: 1px solid rgba(255,255,255,.02);
     border-radius: 22px;
     padding: 18px;
-    box-shadow: 0 8px 20px rgba(113, 76, 141, .08);
 }
 
 .set-badge {
@@ -238,6 +236,14 @@
     align-items: end;
 }
 
+.operation-panel.guided-active {
+    grid-template-columns: 1fr;
+}
+
+.operation-panel.free-active {
+    grid-template-columns: 1fr 60px;
+}
+
 /* SHORTCUTS */
 .op-shortcuts {
     display: flex;
@@ -319,6 +325,19 @@
     color: #33203f;
     font-size: 16px;
     line-height: 1.5;
+}
+
+.result-card {
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+}
+
+.result-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition: opacity .28s ease, transform .28s ease;
 }
 
 .result-meta {
@@ -410,7 +429,7 @@
     }
 
     .set-card {
-        grid-template-columns: 56px 1fr 12px;
+        grid-template-columns: 56px 1fr;
         gap: 12px;
         align-items: start;
     }

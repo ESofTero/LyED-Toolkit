@@ -26,67 +26,69 @@
             <h1>Operaciones con <span class="sub-line">Conjuntos</span></h1>
             <p>Carga tus conjuntos desde archivos y realiza operaciones entre ellos.</p>
             <div class="mini-line" aria-hidden="true"></div>
-            <button class="upload-btn" type="button"><span>⎘</span> Cargar archivos</button>
+
+            <button class="upload-btn" id="uploadBtn" type="button">
+                <span>⎘</span> Cargar archivos
+            </button>
+            <input id="fileInput" type="file" accept=".txt" multiple hidden />
         </section>
 
         <div class="main-grid">
-
-            <!-- IZQUIERDA -->
             <section class="left-panel">
-
-
-                <div class="sets-list mini-card">
-                    <article class="set-card">
-                        <div class="set-badge">A</div>
-                        <div class="set-info">
-                            <div class="set-top">
-                                <h3>Conjunto A</h3>
-                                <span class="set-size">7 elementos</span>
+                <div class="sets-list mini-card" id="setsList">
+                    <div id="set-example">
+                        <article class="set-card">
+                            <div class="set-badge">A</div>
+                            <div class="set-info">
+                                <div class="set-top">
+                                    <h3>Conjunto Ejemplo</h3>
+                                    <span class="set-size">7 elementos</span>
+                                </div>
+                                <p class="file-name">conjunto_A.txt</p>
+                                <div class="set-preview">{ a, b, c, {a,c}, 1, 2, 3 }</div>
                             </div>
-                            <p class="file-name">conjunto_A.txt</p>
-                            <div class="set-preview">{ a, b, c, {a,c}, 1, 2, 3 }</div>
-                        </div>
-                        <span class="set-status"></span>
-                    </article>
+                        </article>
 
-                    <article class="set-card">
-                        <div class="set-badge">B</div>
-                        <div class="set-info">
-                            <div class="set-top">
-                                <h3>Conjunto B</h3>
-                                <span class="set-size">6 elementos</span>
+                        <article class="set-card">
+                            <div class="set-badge">B</div>
+                            <div class="set-info">
+                                <div class="set-top">
+                                    <h3>Conjunto Ejemplo</h3>
+                                    <span class="set-size">6 elementos</span>
+                                </div>
+                                <p class="file-name">conjunto_B.txt</p>
+                                <div class="set-preview">{ b, c, d, 3, 4, x }</div>
                             </div>
-                            <p class="file-name">conjunto_B.txt</p>
-                            <div class="set-preview">{ b, c, d, 3, 4, x }</div>
-                        </div>
-                        <span class="set-status"></span>
-                    </article>
+                        </article>
 
-                    <article class="set-card">
-                        <div class="set-badge">C</div>
-                        <div class="set-info">
-                            <div class="set-top">
-                                <h3>Conjunto C</h3>
-                                <span class="set-size">4 elementos</span>
+                        <article class="set-card">
+                            <div class="set-badge">C</div>
+                            <div class="set-info">
+                                <div class="set-top">
+                                    <h3>Conjunto Ejemplo</h3>
+                                    <span class="set-size">4 elementos</span>
+                                </div>
+                                <p class="file-name">conjunto_C.txt</p>
+                                <div class="set-preview">{ {a,c}, d, 5, 6 }</div>
                             </div>
-                            <p class="file-name">conjunto_C.txt</p>
-                            <div class="set-preview">{ {a,c}, d, 5, 6 }</div>
-                        </div>
-                        <span class="set-status"></span>
-                    </article>
+                        </article>
 
-                    <article class="set-card">
-                        <div class="set-badge">U</div>
-                        <div class="set-info">
-                            <div class="set-top">
-                                <h3>Universo U</h3>
-                                <span class="set-size">10 elementos</span>
+                        <article class="set-card mini-card">
+                            <div class="set-badge">U</div>
+                            <div class="set-info">
+                                <div class="set-top">
+                                    <h3>Universo U</h3>
+                                    <span class="set-size">12 elementos</span>
+                                </div>
+                                <div class="universe-upload">
+                                    <div>
+                                        <p class="file-name">calculado automáticamente</p>
+                                        <div class="set-preview">{ a, b, c, {a,c}, 1, 2, 3, d, 4, x, 5, 6 }</div>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="file-name">conjunto_U.txt</p>
-                            <div class="set-preview">{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }</div>
-                        </div>
-                        <span class="set-status"></span>
-                    </article>
+                        </article>
+                    </div>
                 </div>
 
                 <div class="format-box">
@@ -95,42 +97,12 @@
                 </div>
 
                 <div class="left-actions">
-                    <button class="btn btn-outline" type="button">Limpiar todo</button>
-                    <button class="btn btn-solid" type="button">Validar archivos</button>
+                    <button class="btn btn-outline" id="clearAllBtn" type="button">Limpiar todo</button>
+                    <button class="btn btn-solid" id="validateBtn" type="button">Validar archivos</button>
                 </div>
             </section>
 
-            <!-- DERECHA -->
             <section class="right-panel">
-                <!--
-                <div class="mini-card">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <span class="section-icon">◔</span>
-                            <span>CARDINALIDAD</span>
-                        </div>
-                    </div>
-
-                    <div class="cardinality-list">
-                        <div class="cardinality-row">
-                            <span>Conjunto A</span>
-                            <strong>|A| = 8</strong>
-                        </div>
-                        <div class="cardinality-row">
-                            <span>Conjunto B</span>
-                            <strong>|B| = 6</strong>
-                        </div>
-                        <div class="cardinality-row">
-                            <span>Conjunto C</span>
-                            <strong>|C| = 4</strong>
-                        </div>
-                        <div class="cardinality-row">
-                            <span>Universo U</span>
-                            <strong>|U| = 10</strong>
-                        </div>
-                    </div>
-                </div>
-                -->
                 <div class="operation-panel">
                     <div class="mini-card">
                         <div class="section-header">
@@ -141,34 +113,29 @@
                         </div>
 
                         <div class="mode-switch">
-                            <button class="btn mode-btn " type="button">Selección guiada</button>
-                            <button class="btn mode-btn active" type="button">Expresión libre</button>
+                            <button class="btn mode-btn active" id="guidedModeBtn" type="button">Selección guiada</button>
+                            <button class="btn mode-btn" id="freeModeBtn" type="button">Expresión libre</button>
                         </div>
 
-                        <div class="free-expression-panel ">
+                        <div class="free-expression-panel hidden" id="freePanel">
                             <div class="field field-full">
                                 <label for="expressionInput">Expresión:</label>
-                                <input
-                                        id="expressionInput"
-                                        type="text"
-                                        placeholder="Ej. (A ∪ B) - C"
-                                />
+                                <input id="expressionInput" type="text" placeholder="Ej. (A ∩ B) - C" />
                             </div>
 
                             <p class="expression-help">
-                                Usa conjuntos como A, B, C o U y operaciones como ∪, ∩, -, △ y paréntesis.
+                                Usa conjuntos como A, B, C, D... y operaciones como ∪, ∩, -, △ y paréntesis.
                             </p>
                         </div>
 
-
-                        <div class="operation-grid hidden">
+                        <div class="operation-grid" id="guidedPanel">
                             <div class="field">
                                 <label for="operationType">Operación:</label>
                                 <select id="operationType">
-                                    <option>Unión</option>
-                                    <option>Intersección</option>
+                                    <option>Union</option>
+                                    <option>Interseccion</option>
                                     <option>Diferencia</option>
-                                    <option>Diferencia simétrica</option>
+                                    <option>Diferencia simetrica</option>
                                 </select>
                             </div>
 
@@ -178,7 +145,6 @@
                                     <option>A</option>
                                     <option>B</option>
                                     <option>C</option>
-                                    <option>U</option>
                                 </select>
                             </div>
 
@@ -188,47 +154,44 @@
                                     <option>B</option>
                                     <option>A</option>
                                     <option>C</option>
-                                    <option>U</option>
                                 </select>
                             </div>
-
                         </div>
                     </div>
-                    <div class="op-shortcuts">
-                        <button class="btn btn-outline"><span>U</span></button>
-                        <button class="btn btn-outline">∩</button>
-                        <button class="btn btn-outline"><span>-</span></button>
-                        <button class="btn btn-outline">△</button>
+
+                    <div class="op-shortcuts hidden" id="symbolButtons">
+                        <button class="btn btn-outline" type="button" data-symbol="∪">∪</button>
+                        <button class="btn btn-outline" type="button" data-symbol="∩">∩</button>
+                        <button class="btn btn-outline" type="button" data-symbol="-">-</button>
+                        <button class="btn btn-outline" type="button" data-symbol="△">△</button>
                     </div>
                 </div>
 
+                <button class="btn btn-solid btn-large" id="calculateBtn" type="button">Calcular</button>
 
-                <div class="mini-card">
+                <div class="mini-card hidden result-card" id="result-card">
                     <div class="section-header">
                         <div class="section-title">
                             <span>RESULTADO</span>
                         </div>
-                        <span class="result-count">6 elementos</span>
+                        <span class="result-count" id="resultCount">0 elementos</span>
                     </div>
 
-                    <div class="result-box">
-                        A ∪ B = { a, b, c, {a,c}, 1, 2, 3, d }
+                    <div class="result-box" id="resultBox">
+                        Aquí aparecerá el resultado.
                     </div>
 
                     <div class="result-meta">
-                        <span class="meta-chip">8 elementos</span>
-                        <span class="meta-chip success">✓ Sin duplicados</span>
+                        <span class="meta-chip" id="resultMetaCount">0 elementos</span>
+                        <span class="meta-chip success" id="resultMetaStatus">✓ Sin duplicados</span>
                     </div>
                 </div>
-
-                <button class="btn btn-solid btn-large" type="button">Calcular</button>
-
-
-
             </section>
         </div>
     </section>
 </main>
 
+<script src="sets-logic.js"></script>
+<script src="sets-app.js"></script>
 </body>
 </html>
