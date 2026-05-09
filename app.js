@@ -16,6 +16,10 @@ document.querySelectorAll(".module-btn").forEach((btn) => {
             // Navegación a la Calculadora de Conjuntos (módulo 2)
             window.location.href = "sets-module2/sets.html";
             return;
+        } else if (moduleId === "3") {
+            // Navegación a Sucesiones e Inducción (módulo 3)
+            window.location.href = "succesions-module3/succesions.html";
+            return;
         }
 
         // Otros módulos: pendientes

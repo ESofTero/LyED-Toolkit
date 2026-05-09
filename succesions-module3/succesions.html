@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sucesiones - LyED ToolKit</title>
+    <link rel="stylesheet" href="../shared/base.css" />
+    <link rel="stylesheet" href="succesions.css" />
+</head>
+<body>
+
+<header class="topbar">
+    <div class="topbar-left">
+        <a class="back-link" href="../index.html" target="_self">← Volver</a>
+        <span class="topbar-sep">/</span>
+        <span class="topbar-title">LyED ToolKit</span>
+    </div>
+    <div class="topbar-right">MÓDULO 3</div>
+</header>
+
+<main class="page">
+    <section class="card sequence-card">
+
+        <section class="hero">
+            <div class="title-line" aria-hidden="true"></div>
+            <h1>Sucesiones <span class="sub-line">e Inducción</span></h1>
+            <p>Ingresa una fórmula explícita, define los límites y genera los términos de la sucesión.</p>
+            <div class="mini-line" aria-hidden="true"></div>
+        </section>
+
+        <section class="mini-card params-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="section-icon">☷</span>
+                    <span>PARÁMETROS</span>
+                </div>
+            </div>
+
+            <div class="params-grid">
+                <div class="field">
+                    <label for="lowerLimit">Límite inferior (m)</label>
+                    <input id="lowerLimit" type="number" placeholder="Ej. 10" />
+                </div>
+
+                <div class="field">
+                    <label for="upperLimit">Límite superior (n)</label>
+                    <input id="upperLimit" type="number" placeholder="Ej. 30" />
+                </div>
+
+                <div class="field formula-field">
+                    <label for="formulaInput">Fórmula explícita a<sub>k</sub></label>
+                    <input id="formulaInput" type="text" placeholder="Ej. 1/k" />
+                </div>
+            </div>
+
+            <div class="params-actions">
+                <p class="input-help">
+                    Usa la variable <code>k</code>. Ejemplos: <code>1/k</code>, <code>k^2 + 1</code>, <code>2*k + 3</code>
+                </p>
+
+                <div class="params-buttons">
+                    <button class="btn btn-outline" id="exampleBtn" type="button">Ver ejemplo</button>
+                    <button class="btn btn-solid" id="generateBtn" type="button">Generar sucesión</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="mini-card terms-card hidden" id="termsCard">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="section-icon">☰</span>
+                    <span>TÉRMINOS DE LA SUCESIÓN</span>
+                </div>
+                <span class="pill" id="termsCount">0 términos</span>
+            </div>
+
+            <div class="terms-list" id="termsList"></div>
+        </section>
+
+        <section class="mini-card results-card hidden" id="resultsCard">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="section-icon">∑</span>
+                    <span>RESULTADOS</span>
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <article class="result-box">
+                    <span class="result-label">Sumatoria</span>
+                    <div class="result-content">
+                        <span class="result-symbol">∑</span>
+                        <strong id="sumValue">0</strong>
+                    </div>
+                    <p id="sumNotation">Σ aₖ</p>
+                </article>
+
+                <article class="result-box">
+                    <span class="result-label">Multiplicación</span>
+                    <div class="result-content">
+                        <span class="result-symbol">Π</span>
+                        <strong id="productValue">0</strong>
+                    </div>
+                    <p id="productNotation">Π aₖ</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="format-box">
+            <h4>💡 Nota</h4>
+            <p>La sucesión se genera desde el término a<sub>m</sub> hasta a<sub>n</sub>. También se calcula la sumatoria y la multiplicación de todos sus términos.</p>
+        </section>
+
+        <section class="mini-card error-card hidden" id="errorCard" aria-live="polite">
+            <div class="section-title">
+                <span>⚠</span>
+                <span>REVISAR DATOS</span>
+            </div>
+            <p id="errorText"></p>
+        </section>
+
+    </section>
+</main>
+
+<script src="succesions-logic.js"></script>
+<script src="succesions-app.js"></script>
+</body>
+</html>
