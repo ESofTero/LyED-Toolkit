@@ -3,17 +3,18 @@
  * Lógica pura para generar términos, sumatoria y multiplicación.
  * No toca DOM.
  */
+
 (() => {
     "use strict";
 
     const ALLOWED_FUNCTIONS = [
-        "sin", "cos", "tan", "sqrt", "abs", "log", "ln", "exp", "pow",
+        "sin", "cos", "tan", "sqrt", "abs", "log", "exp",
         "floor", "ceil", "round", "min", "max"
     ];
 
     function normalizeFormula(formula) {
         if (typeof formula !== "string" || !formula.trim()) {
-            throw new Error("Escribe una fórmula explícita para aₖ.");
+            throw new Error("Escribe una fórmula para aₖ.");
         }
 
         let expression = formula.trim();
@@ -21,18 +22,17 @@
         expression = expression
             .replace(/π/gi, "pi")
             .replace(/\^/g, "**")
-            .replace(/\bln\s*\(/gi, "log(");
+            .replace(/\bln\s*\(/gi, "log("); // ln = log natural
 
         expression = expression.replace(/\bpi\b/gi, "Math.PI");
         expression = expression.replace(/\be\b/g, "Math.E");
 
         for (const fn of ALLOWED_FUNCTIONS) {
-            if (fn === "ln") continue;
             const pattern = new RegExp(`\\b${fn}\\s*\\(`, "gi");
             expression = expression.replace(pattern, `Math.${fn}(`);
         }
 
-        if (!/^[0-9kK+\-*/().,\s*MathPIEabscosintqrtlgpwerfmnx]*$/.test(expression)) {
+        if (!/^[0-9kK+\-*/().,\sA-Za-z]*$/.test(expression)) {
             throw new Error("La fórmula contiene caracteres no permitidos.");
         }
 
@@ -47,11 +47,11 @@
                 "use strict";
                 const value = (${expression});
                 if (!Number.isFinite(value)) {
-                    throw new Error("La fórmula produjo un valor no finito en k = " + k);
+                    throw new Error("Valor inválido en k = " + k);
                 }
                 return value;
             `);
-        } catch (error) {
+        } catch {
             throw new Error("La fórmula no tiene una sintaxis válida.");
         }
     }
@@ -61,15 +61,15 @@
         const n = Number(upper);
 
         if (!Number.isInteger(m) || !Number.isInteger(n)) {
-            throw new Error("Los límites m y n deben ser números enteros.");
+            throw new Error("m y n deben ser números enteros.");
         }
 
         if (m > n) {
-            throw new Error("El límite inferior m no puede ser mayor que el límite superior n.");
+            throw new Error("m no puede ser mayor que n.");
         }
 
         if ((n - m + 1) > 1000) {
-            throw new Error("La sucesión es demasiado larga. Usa un rango de máximo 1000 términos.");
+            throw new Error("Máximo 1000 términos permitidos.");
         }
 
         return { m, n };
@@ -85,7 +85,12 @@
 
         for (let k = m; k <= n; k++) {
             const value = evaluate(k);
-            terms.push({ k, value });
+
+            terms.push({
+                k,
+                value: Number(value.toFixed(4))
+            });
+
             sum += value;
             product *= value;
         }
@@ -95,12 +100,39 @@
             upper: n,
             formula,
             terms,
-            sum,
-            product
+            sum: Number(sum.toFixed(4)),
+            product: Number(product.toFixed(4))
         };
     }
 
-    window.LyEDSuccessionsLogic = {
-        generateSequence
+    function sumaRecursiva(lista, i = 0) {
+        if (i >= lista.length) return 0;
+        return lista[i].value + sumaRecursiva(lista, i + 1);
+    }
+
+    function productoRecursivo(lista, i = 0) {
+        if (i >= lista.length) return 1;
+        return lista[i].value * productoRecursivo(lista, i + 1);
+    }
+
+    function generarEjemplo() {
+        const ejemplos = [
+            { formula: "1/k", lower: 1, upper: 5 },
+            { formula: "k", lower: 1, upper: 6 },
+            { formula: "k*2", lower: 1, upper: 5 },
+            { formula: "k^2", lower: 1, upper: 4 },
+            { formula: "2*k+3", lower: 1, upper: 5 },
+            { formula: "sqrt(k)", lower: 1, upper: 5 },
+            { formula: "sin(k)", lower: 1, upper: 5 }
+        ];
+
+        return ejemplos[Math.floor(Math.random() * ejemplos.length)];
+    }
+
+    window.LyEDSucesionesLogic = {
+        generateSequence,
+        sumaRecursiva,
+        productoRecursivo,
+        generarEjemplo
     };
 })();
