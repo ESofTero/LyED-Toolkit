@@ -129,7 +129,7 @@
         return ejemplos[Math.floor(Math.random() * ejemplos.length)];
     }
 
-    window.LyEDSucesionesLogic = {
+    window.LyEDSuccessionsLogic = {
         generateSequence,
         sumaRecursiva,
         productoRecursivo,
