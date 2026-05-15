@@ -96,13 +96,14 @@
 .term-item{
     min-height: 42px;
     border-radius: 18px;
-    background: rgba(129, 92, 151, 0.20);
+    background: rgba(129, 92, 151, 0.12);
+    border: 1px solid rgba(171,144,185,.22);
     padding: 10px 14px;
     color: #33203f;
     display: grid;
-    grid-template-columns: auto 28px 1fr;
+    grid-template-columns: auto 28px minmax(90px, 1fr) minmax(90px, auto);
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .term-label{
@@ -117,11 +118,32 @@
     color: #5d4373;
 }
 
+.term-expression{
+    color: #6d4a87;
+    font-weight: 700;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.term-result{
+    color: #2e1d39;
+    font-weight: 800;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
 .term-value{
     color: #2e1d39;
     font-variant-numeric: tabular-nums;
     text-align: right;
     overflow-wrap: anywhere;
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .results-grid{
@@ -247,5 +269,14 @@
 
     .terms-list{
         grid-template-columns: 1fr;
+    }
+
+    .term-item{
+        grid-template-columns: auto 24px 1fr;
+    }
+
+    .term-result{
+        grid-column: 1 / -1;
+        text-align: right;
     }
 }

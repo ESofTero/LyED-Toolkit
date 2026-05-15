@@ -76,17 +76,22 @@ document.addEventListener("DOMContentLoaded", () => {
         showCard(errorCard);
     }
 
-    function renderTerms(terms) {
+    function buildTermCalculation(formula, k) {
+        return String(formula).replace(/\bk\b/gi, String(k));
+    }
+
+    function renderTerms(terms, formula) {
         termsList.innerHTML = "";
 
         terms.forEach(term => {
             const item = document.createElement("div");
             item.className = "term-item";
             item.innerHTML = `
-                            <span class="term-label">a<sub>${term.k}</sub></span>
-                            <span class="term-equals">=</span>
-                            <span class="term-value">${formatNumber(term.value)}</span>
-                        `;
+                                <span class="term-label">a<sub>${term.k}</sub></span>
+                                <span class="term-equals">=</span>
+                                <span class="term-expression">(${buildTermCalculation(formula, term.k)})</span>
+                                <span class="term-result">${formatNumber(term.value)}</span>
+                            `;
             termsList.appendChild(item);
         });
 
@@ -116,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 formula: formulaInput.value
             });
 
-            renderTerms(sequence.terms);
+            renderTerms(sequence.terms, sequence.formula);
             renderResults(sequence);
 
             generatedState = true;
