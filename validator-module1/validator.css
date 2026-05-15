@@ -1,9 +1,15 @@
 /* LyED ToolKit (Módulo 1) - Estilos del validador */
 
+.page{
+    grid-template-columns: minmax(0, 1fr);
+}
+
 .card{
     width: min(980px, 100%);
+    min-width: 0;
     padding: 34px;
     position: relative;
+    justify-self: center;
 }
 
 /* Help símbolos */
@@ -299,6 +305,8 @@
 .truth{
     margin-top: 18px;
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     background: rgba(255,255,255,.96);
     color: #230443;
     border-radius: 22px;
@@ -308,6 +316,7 @@
 }
 
 .truth-head{
+    min-width: 0;
     padding: 16px 18px;
     border-bottom: 1px solid rgba(35,4,67,.08);
     display: flex;
@@ -342,7 +351,9 @@
 }
 
 .truth-wrap{
+    display: block;
     width: 100%;
+    min-width: 0;
     max-width: 100%;
     overflow-x: auto;
     overflow-y: auto;
@@ -351,8 +362,8 @@
 }
 
 .truth-table{
-    width: 100%;
-    min-width: 760px;
+    width: max-content;
+    min-width: 100%;
     border-collapse: separate;
     border-spacing: 0;
 }
@@ -413,10 +424,6 @@
 @media (max-width: 720px){
     .page{
         padding: 32px 12px 48px;
-    }
-
-    .card{
-        min-width: 0;
     }
 
     .hero h1{
@@ -481,6 +488,10 @@
         max-width: 100%;
         overflow-wrap: anywhere;
     }
+
+    .truth-table{
+        min-width: 560px;
+    }
 }
 
 @media (max-width: 420px){
@@ -490,10 +501,6 @@
 
     .btn{
         flex: 1 1 100%;
-    }
-
-    .truth-table{
-        min-width: 560px;
     }
 
     .banner{
