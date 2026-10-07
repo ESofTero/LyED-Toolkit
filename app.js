@@ -18,7 +18,7 @@ document.querySelectorAll(".module-btn").forEach((btn) => {
             return;
         } else if (moduleId === "3") {
             // Navegación a Sucesiones e Inducción (módulo 3)
-            window.location.href = "succesions-module3/succesions.html";
+            window.location.href = "sequences-module3/sequences.html";
             return;
         }
 

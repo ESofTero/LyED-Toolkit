@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         !termsCard || !resultsCard || !errorCard || !termsList || !termsCount ||
         !sumValue || !productValue || !sumNotation || !productNotation || !errorText
     ) {
-        console.error("Faltan elementos necesarios en el DOM para succesions-app.js");
+        console.error("Faltan elementos necesarios en el DOM para sequences-app.js");
         return;
     }
 
