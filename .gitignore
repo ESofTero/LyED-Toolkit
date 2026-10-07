@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+# JetBrains
+.idea/
+# Dependencies
+node_modules/
+# Logs
+*.log
+# Archives
+*.zip
