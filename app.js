@@ -1,7 +1,6 @@
 /**
  * LyED ToolKit (Home)
  * Maneja la navegación desde la página principal hacia los módulos.
- * Por ahora solo está conectado el Módulo 1 (Validador).
  */
 
 document.querySelectorAll(".module-btn").forEach((btn) => {
@@ -21,8 +20,5 @@ document.querySelectorAll(".module-btn").forEach((btn) => {
             window.location.href = "sequences-module3/sequences.html";
             return;
         }
-
-        // Otros módulos: pendientes
-        console.log("Módulo no implementado aún:", moduleId);
     });
 });
